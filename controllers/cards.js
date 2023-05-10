@@ -67,13 +67,13 @@ const likeCard = async (req, res) => {
     }
     // const updatedCards = await Card.findOne(userId);
     // res.send(updatedCards);
-    res.send(cards);
+    res.status(STATUS_CODES['200_OK']).send(cards);
   } catch (err) {
-    if (err.status === 400) {
+    if (err.name === 'CastError') {
       res
         .status(STATUS_CODES['400_BAD_REQUEST'])
         .send(MESSAGES['400_BAD_REQUEST']);
-    } else if (err.status === 500) {
+    } else {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
         .send({ message: err.message });
@@ -93,13 +93,13 @@ const dislikeCard = async (req, res) => {
         .status(STATUS_CODES['404_NOT_FOUND'])
         .send(MESSAGES['404_NOT_FOUND']);
     }
-    res.send(cards);
+    res.status(STATUS_CODES['200_OK']).send(cards);
   } catch (err) {
-    if (err.status === 400) {
+    if (err.name === 'CastError') {
       res
         .status(STATUS_CODES['400_BAD_REQUEST'])
         .send(MESSAGES['400_BAD_REQUEST']);
-    } else if (err.status === 500) {
+    } else {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
         .send({ message: err.message });
