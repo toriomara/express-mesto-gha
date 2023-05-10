@@ -6,7 +6,7 @@ const getCards = async (req, res) => {
     const cards = await Card.find({});
     res.status(STATUS_CODES['200_OK']).send(cards);
   } catch (err) {
-    return res
+    res
       .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
       .send({ message: err.message });
   }
@@ -22,7 +22,7 @@ const createCard = async (req, res) => {
       res
         .status(STATUS_CODES['400_BAD_REQUEST'])
         .send(MESSAGES['400_BAD_REQUEST']);
-    } else if ((err.status = 500)) {
+    } else {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
         .send({ message: err.message });
@@ -35,9 +35,7 @@ const deleteCardById = async (req, res) => {
     const cardId = req.params.cardId;
     const card = await Card.findByIdAndDelete(cardId);
     if (!card) {
-      res
-        .status(STATUS_CODES['404_NOT_FOUND'])
-        .send({ message: MESSAGES['404_NOT_FOUND'] });
+      res.status(STATUS_CODES['404_NOT_FOUND']).send(MESSAGES['404_NOT_FOUND']);
     }
     res.send(card);
   } catch (err) {

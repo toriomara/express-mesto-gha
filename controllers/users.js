@@ -22,7 +22,7 @@ const getUserById = async (req, res) => {
     if (err.name === 'CastError') {
       res
         .status(STATUS_CODES['400_BAD_REQUEST'])
-        .send({ message: MESSAGES['400_BAD_REQUEST'] });
+        .send(MESSAGES['400_BAD_REQUEST']);
     } else if (err.name === 'DocumentNotFoundError') {
       res.status(STATUS_CODES['404_NOT_FOUND']).send(MESSAGES['404_NOT_FOUND']);
     } else {
@@ -43,7 +43,7 @@ const createUser = async (req, res) => {
       res
         .status(STATUS_CODES['400_BAD_REQUEST'])
         .send(MESSAGES['400_BAD_REQUEST']);
-    } else if (err.status === 500) {
+    } else {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
         .send({ message: err.message });
@@ -63,24 +63,21 @@ const updateUser = async (req, res) => {
         upsert: true,
       }
     );
-    if (!user) {
-      return res
-        .status(STATUS_CODES['400_BAD_REQUEST'])
-        .send(MESSAGES['400_BAD_REQUEST']);
-    }
-    const updatedUser = await User.findOne(userId);
-    res.send(updatedUser);
+    // const updatedUser = await User.findOne(userId);
+    // res.send(updatedUser);
+    res.send(user);
   } catch (err) {
-    if (err.status === 400) {
+    if (err.name === 'ValidationError') {
       res
         .status(STATUS_CODES['400_BAD_REQUEST'])
         .send(MESSAGES['400_BAD_REQUEST']);
-    } else if (err.status === 500) {
+    } else if (err.status === 'DocumentNotFoundError') {
+      res.status(STATUS_CODES['404_NOT_FOUND']).send(MESSAGES['404_NOT_FOUND']);
+    } else {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
         .send({ message: err.message });
     }
-    res.status(500).send({ message: err.message });
   }
 };
 
@@ -89,24 +86,21 @@ const updateAvatar = async (req, res) => {
     const { avatar } = req.body;
     const userId = req.params._id;
     const user = await User.findOneAndUpdate(userId, { avatar });
-    if (!user) {
-      return res
-        .status(STATUS_CODES['400_BAD_REQUEST'])
-        .send(MESSAGES['400_BAD_REQUEST']);
-    }
-    const updatedUser = await User.findOne(userId);
-    res.send(updatedUser);
+    // const updatedUser = await User.findOne(userId);
+    // res.send(updatedUser);
+    res.send(user);
   } catch (err) {
-    if (err.status === 400) {
+    if (err.name === 'ValidationError') {
       res
         .status(STATUS_CODES['400_BAD_REQUEST'])
         .send(MESSAGES['400_BAD_REQUEST']);
-    } else if (err.status === 500) {
+    } else if (err.status === 'DocumentNotFoundError') {
+      res.status(STATUS_CODES['404_NOT_FOUND']).send(MESSAGES['404_NOT_FOUND']);
+    } else {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
         .send({ message: err.message });
     }
-    res.status(500).send({ message: err.message });
   }
 };
 
