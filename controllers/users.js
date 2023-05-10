@@ -19,7 +19,7 @@ const getUserById = async (req, res) => {
     const user = await User.findById(req.params.userId);
     res.send(user);
   } catch (err) {
-    if (err.status === 404) {
+    if (err.name === 'ValidationError') {
       res
         .status(STATUS_CODES['404_NOT_FOUND'])
         .send({ message: MESSAGES['404_NOT_FOUND'] });
