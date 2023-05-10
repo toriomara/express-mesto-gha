@@ -19,11 +19,13 @@ const getUserById = async (req, res) => {
     const user = await User.findById(req.params.userId);
     res.send(user);
   } catch (err) {
-    if (err.name === 'ValidationError') {
+    if (err.name === 'CastError') {
       res
-        .status(STATUS_CODES['404_NOT_FOUND'])
-        .send({ message: MESSAGES['404_NOT_FOUND'] });
-    } else if (err.status === 500) {
+        .status(STATUS_CODES['400_BAD_REQUEST'])
+        .send({ message: MESSAGES['400_BAD_REQUEST'] });
+    } else if (err.name === 'DocumentNotFoundError') {
+      res.status(STATUS_CODES['404_NOT_FOUND']).send(MESSAGES['404_NOT_FOUND']);
+    } else {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
         .send({ message: err.message });

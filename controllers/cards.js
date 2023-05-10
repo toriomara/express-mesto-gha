@@ -4,12 +4,11 @@ const { STATUS_CODES, MESSAGES } = require('../utils/constants');
 const getCards = async (req, res) => {
   try {
     const cards = await Card.find({});
-    res.status(200).send(cards);
-  } catch {
-    (err) =>
-      res
-        .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
-        .send({ message: err.message });
+    res.status(STATUS_CODES['200_OK']).send(cards);
+  } catch (err) {
+    return res
+      .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
+      .send({ message: err.message });
   }
 };
 
@@ -19,7 +18,7 @@ const createCard = async (req, res) => {
     const card = await Card.create({ name, link, owner: req.user._id });
     res.status(STATUS_CODES['200_OK']).send(card);
   } catch (err) {
-    if ((err.status = 400)) {
+    if ((err.name = 'ValidationError')) {
       res
         .status(STATUS_CODES['400_BAD_REQUEST'])
         .send(MESSAGES['400_BAD_REQUEST']);
@@ -42,9 +41,15 @@ const deleteCardById = async (req, res) => {
     }
     res.send(card);
   } catch (err) {
-    res
-      .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
-      .send({ message: err.message });
+    if (err.name === 'CastError') {
+      res
+        .status(STATUS_CODES['400_BAD_REQUEST'])
+        .send(MESSAGES['400_BAD_REQUEST']);
+    } else {
+      res
+        .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
+        .send({ message: err.message });
+    }
   }
 };
 
@@ -64,11 +69,11 @@ const likeCard = async (req, res) => {
     // res.send(updatedCards);
     res.send(cards);
   } catch (err) {
-    if ((err.status = 400)) {
+    if (err.name === 400) {
       res
         .status(STATUS_CODES['400_BAD_REQUEST'])
         .send(MESSAGES['400_BAD_REQUEST']);
-    } else if ((err.status = 500)) {
+    } else if (err.status === 500) {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
         .send({ message: err.message });
@@ -90,11 +95,11 @@ const dislikeCard = async (req, res) => {
     }
     res.send(cards);
   } catch (err) {
-    if ((err.status = 400)) {
+    if (err.status === 400) {
       res
         .status(STATUS_CODES['400_BAD_REQUEST'])
         .send(MESSAGES['400_BAD_REQUEST']);
-    } else if ((err.status = 500)) {
+    } else if (err.status === 500) {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
         .send({ message: err.message });
