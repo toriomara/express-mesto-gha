@@ -69,7 +69,7 @@ const likeCard = async (req, res) => {
     // res.send(updatedCards);
     res.send(cards);
   } catch (err) {
-    if (err.name === 400) {
+    if (err.status === 400) {
       res
         .status(STATUS_CODES['400_BAD_REQUEST'])
         .send(MESSAGES['400_BAD_REQUEST']);
