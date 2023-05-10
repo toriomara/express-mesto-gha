@@ -54,18 +54,15 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { name, about } = req.body;
-    const userId = req.params._id;
-    const user = await User.findOneAndUpdate(
-      userId,
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
       { name, about },
       {
         new: true,
-        upsert: true,
+        runValidators: true,
       }
     );
-    // const updatedUser = await User.findOne(userId);
-    // res.send(updatedUser);
-    res.send(user);
+    res.status(STATUS_CODES['200_OK']).send(user);
   } catch (err) {
     if (err.name === 'ValidationError') {
       res
@@ -84,11 +81,14 @@ const updateUser = async (req, res) => {
 const updateAvatar = async (req, res) => {
   try {
     const { avatar } = req.body;
-    const userId = req.params._id;
-    const user = await User.findOneAndUpdate(userId, { avatar });
-    // const updatedUser = await User.findOne(userId);
-    // res.send(updatedUser);
-    res.send(user);
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        avatar,
+      },
+      { new: true, runValidators: true }
+    ).orFail();
+    res.status(STATUS_CODES['200_OK']).send(user);
   } catch (err) {
     if (err.name === 'ValidationError') {
       res

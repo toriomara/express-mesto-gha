@@ -57,17 +57,12 @@ const likeCard = async (req, res) => {
       req.params.cardId,
       { $addToSet: { likes: req.user._id } },
       { new: true }
-    );
-    if (!cards) {
-      return res
-        .status(STATUS_CODES['404_NOT_FOUND'])
-        .send(MESSAGES['404_NOT_FOUND']);
-    }
-    // const updatedCards = await Card.findOne(userId);
-    // res.send(updatedCards);
+    ).onFail();
     res.status(STATUS_CODES['200_OK']).send(cards);
   } catch (err) {
-    if (err.name === 'CastError') {
+    if (err.name === 'DocumentNotFoundError') {
+      res.status(STATUS_CODES['404_NOT_FOUND']).send(MESSAGES['404_NOT_FOUND']);
+    } else if (err.name === 'CastError') {
       res
         .status(STATUS_CODES['400_BAD_REQUEST'])
         .send(MESSAGES['400_BAD_REQUEST']);
@@ -85,15 +80,12 @@ const dislikeCard = async (req, res) => {
       req.params.cardId,
       { $pull: { likes: req.user._id } },
       { new: true }
-    );
-    if (!cards) {
-      return res
-        .status(STATUS_CODES['404_NOT_FOUND'])
-        .send(MESSAGES['404_NOT_FOUND']);
-    }
+    ).onFail();
     res.status(STATUS_CODES['200_OK']).send(cards);
   } catch (err) {
-    if (err.name === 'CastError') {
+    if (err.name === 'DocumentNotFoundError') {
+      res.status(STATUS_CODES['404_NOT_FOUND']).send(MESSAGES['404_NOT_FOUND']);
+    } else if (err.name === 'CastError') {
       res
         .status(STATUS_CODES['400_BAD_REQUEST'])
         .send(MESSAGES['400_BAD_REQUEST']);
