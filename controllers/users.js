@@ -35,7 +35,7 @@ const createUser = async (req, res) => {
   try {
     const { name, about, avatar } = req.body;
     const user = await User.create({ name, about, avatar });
-    res.send(user);
+    res.status(STATUS_CODES['200_OK']).send(user);
   } catch (err) {
     if (err.status === 400) {
       res
