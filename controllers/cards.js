@@ -56,7 +56,7 @@ const deleteCardById = async (req, res) => {
 const likeCard = async (req, res) => {
   try {
     const cards = await Card.findByIdAndUpdate(
-      req.params.cardId,
+      req.params,
       { $addToSet: { likes: req.user._id } },
       { new: true }
     ).orFail();

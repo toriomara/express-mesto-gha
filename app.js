@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const startApp = async () => {
   try {
-    await mongoose.connect(DB_URL);
+    await mongoose.connect(DB_URL, { useNewUrlParser: true });
     app.listen(PORT, () => {
       console.log(`App listening on port ${PORT}`);
     });
