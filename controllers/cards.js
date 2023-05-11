@@ -21,7 +21,7 @@ const createCard = async (req, res) => {
     if ((err.name = 'ValidationError')) {
       res
         .status(STATUS_CODES['400_BAD_REQUEST'])
-        .send(MESSAGES['400_BAD_REQUEST']);
+        .send(`{MESSAGES['400_BAD_REQUEST']} при создании карточки`);
     } else {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
@@ -35,7 +35,9 @@ const deleteCardById = async (req, res) => {
     const cardId = req.params.cardId;
     const card = await Card.findByIdAndDelete(cardId);
     if (!card) {
-      res.status(STATUS_CODES['404_NOT_FOUND']).send(MESSAGES['404_NOT_FOUND']);
+      res
+        .status(STATUS_CODES['404_NOT_FOUND'])
+        .send(`Карточка с указанным _id не найдена`);
     }
     res.send(card);
   } catch (err) {
@@ -61,11 +63,13 @@ const likeCard = async (req, res) => {
     res.status(STATUS_CODES['200_OK']).send(cards);
   } catch (err) {
     if (err.name === 'DocumentNotFoundError') {
-      res.status(STATUS_CODES['404_NOT_FOUND']).send(MESSAGES['404_NOT_FOUND']);
+      res
+        .status(STATUS_CODES['404_NOT_FOUND'])
+        .send(`Передан несуществующий _id карточки`);
     } else if (err.name === 'CastError') {
       res
         .status(STATUS_CODES['400_BAD_REQUEST'])
-        .send(MESSAGES['400_BAD_REQUEST']);
+        .send(`{MESSAGES['400_BAD_REQUEST']} для постановки лайка`);
     } else {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
@@ -84,11 +88,13 @@ const dislikeCard = async (req, res) => {
     res.status(STATUS_CODES['200_OK']).send(cards);
   } catch (err) {
     if (err.name === 'DocumentNotFoundError') {
-      res.status(STATUS_CODES['404_NOT_FOUND']).send(MESSAGES['404_NOT_FOUND']);
+      res
+        .status(STATUS_CODES['404_NOT_FOUND'])
+        .send(`Передан несуществующий _id карточки`);
     } else if (err.name === 'CastError') {
       res
         .status(STATUS_CODES['400_BAD_REQUEST'])
-        .send(MESSAGES['400_BAD_REQUEST']);
+        .send(`{MESSAGES['400_BAD_REQUEST']} для постановки лайка`);
     } else {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
