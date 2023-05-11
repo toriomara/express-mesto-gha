@@ -59,7 +59,7 @@ const likeCard = async (req, res) => {
       req.params.cardId,
       { $addToSet: { likes: req.user._id } },
       { new: true }
-    ).onFail();
+    ).orFail();
     res.status(STATUS_CODES['200_OK']).send(cards);
   } catch (err) {
     if (err.name === 'DocumentNotFoundError') {
@@ -84,7 +84,7 @@ const dislikeCard = async (req, res) => {
       req.params.cardId,
       { $pull: { likes: req.user._id } },
       { new: true }
-    ).onFail();
+    ).orFail();
     res.status(STATUS_CODES['200_OK']).send(cards);
   } catch (err) {
     if (err.name === 'DocumentNotFoundError') {
