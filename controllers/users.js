@@ -52,8 +52,8 @@ const createUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
+  const { name, about } = req.body;
   try {
-    const { name, about } = req.body;
     const user = await User.findByIdAndUpdate(
       req.user._id,
       { name, about },
@@ -68,7 +68,7 @@ const updateUser = async (req, res) => {
       res
         .status(STATUS_CODES.BAD_REQUEST)
         .send({ message: `${MESSAGES.BAD_REQUEST} при обновлении профиля` });
-    } else if (err.status === 'DocumentNotFoundError') {
+    } else if (err.name === 'DocumentNotFoundError') {
       res
         .status(STATUS_CODES.NOT_FOUND)
         .send({ message: `Пользователь с указанным _id не найден` });
@@ -93,7 +93,7 @@ const updateAvatar = async (req, res) => {
       res
         .status(STATUS_CODES.BAD_REQUEST)
         .send({ message: `${MESSAGES.BAD_REQUEST} при обновлении аватара` });
-    } else if (err.status === 'DocumentNotFoundError') {
+    } else if (err.name === 'DocumentNotFoundError') {
       res
         .status(STATUS_CODES.NOT_FOUND)
         .send({ message: `Пользователь с указанным _id не найден` });
