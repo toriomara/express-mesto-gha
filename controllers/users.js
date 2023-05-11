@@ -82,14 +82,11 @@ const updateUser = async (req, res) => {
 
 const updateAvatar = async (req, res) => {
   try {
-    const { avatar } = req.body;
-    const user = await User.findByIdAndUpdate(
-      req.user._id,
-      {
-        avatar,
-      },
-      { new: true, runValidators: true }
-    ).orFail();
+    // const { avatar } = req.body;
+    const user = await User.findByIdAndUpdate(req.user._id, req.body.avatar, {
+      new: true,
+      runValidators: true,
+    }).orFail();
     res.status(STATUS_CODES['200_OK']).send(user);
   } catch (err) {
     if (err.name === 'ValidationError') {
