@@ -18,10 +18,10 @@ const createCard = async (req, res) => {
     const card = await Card.create({ name, link, owner: req.user._id });
     res.status(STATUS_CODES['200_OK']).send(card);
   } catch (err) {
-    if ((err.name = 'ValidationError')) {
+    if (err.name === 'ValidationError') {
       res
         .status(STATUS_CODES['400_BAD_REQUEST'])
-        .send(`{MESSAGES['400_BAD_REQUEST']} при создании карточки`);
+        .send(`{MESSAGES.['400_BAD_REQUEST']} при создании карточки`);
     } else {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
