@@ -14,7 +14,7 @@ const getUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params).orFail();
+    const user = await User.findById(req.params.userId).orFail();
     res.status(STATUS_CODES.OK).send(user);
   } catch (err) {
     if (err.name === 'CastError') {
