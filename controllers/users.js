@@ -52,8 +52,8 @@ const createUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const { name, about } = req.body;
   try {
+    const { name, about } = req.body;
     const user = await User.findByIdAndUpdate(
       req.user._id,
       { name, about },
@@ -74,7 +74,7 @@ const updateUser = async (req, res) => {
         .send({ message: `Пользователь с указанным _id не найден` });
     } else {
       res
-        .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
+        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
         .send({ message: MESSAGES.INTERNAL_SERVER_ERROR });
     }
   }
