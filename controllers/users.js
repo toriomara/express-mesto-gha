@@ -14,8 +14,8 @@ const getUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId);
-    res.send(user);
+    const user = await User.findById(req.params).orFail();
+    res.status(STATUS_CODES['200_OK']).send(user);
   } catch (err) {
     if (err.name === 'CastError') {
       res
@@ -61,7 +61,7 @@ const updateUser = async (req, res) => {
         new: true,
         runValidators: true,
       }
-    );
+    ).orFail();
     res.status(STATUS_CODES['200_OK']).send(user);
   } catch (err) {
     if (err.name === 'ValidationError') {
