@@ -39,7 +39,7 @@ const deleteCardById = async (req, res) => {
         .status(STATUS_CODES['404_NOT_FOUND'])
         .send(`Карточка с указанным _id не найдена`);
     }
-    res.send(card);
+    res.status(STATUS_CODES['200_OK']).send(card);
   } catch (err) {
     if (err.name === 'CastError') {
       res
