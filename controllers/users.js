@@ -8,7 +8,7 @@ const getUsers = async (req, res) => {
   } catch (err) {
     res
       .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
-      .send({ message: err.message });
+      .send(MESSAGES['500_INTERNAL_SERVER_ERROR']);
   }
 };
 
@@ -28,7 +28,7 @@ const getUserById = async (req, res) => {
     } else {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
-        .send({ message: err.message });
+        .send(MESSAGES['500_INTERNAL_SERVER_ERROR']);
     }
   }
 };
@@ -46,7 +46,7 @@ const createUser = async (req, res) => {
     } else {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
-        .send({ message: err.message });
+        .send(MESSAGES['500_INTERNAL_SERVER_ERROR']);
     }
   }
 };
@@ -75,7 +75,7 @@ const updateUser = async (req, res) => {
     } else {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
-        .send({ message: err.message });
+        .send(MESSAGES['500_INTERNAL_SERVER_ERROR']);
     }
   }
 };
@@ -100,7 +100,7 @@ const updateAvatar = async (req, res) => {
     } else {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
-        .send({ message: err.message });
+        .send(MESSAGES['500_INTERNAL_SERVER_ERROR']);
     }
   }
 };

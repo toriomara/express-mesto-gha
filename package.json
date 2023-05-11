@@ -15,8 +15,8 @@
     "nodemon": "^2.0.22"
   },
   "scripts": {
-    "lint": "npx eslint",
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "lint": "npx eslint"
   }
 }

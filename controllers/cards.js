@@ -8,7 +8,7 @@ const getCards = async (req, res) => {
   } catch (err) {
     res
       .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
-      .send({ message: err.message });
+      .send(MESSAGES['500_INTERNAL_SERVER_ERROR']);
   }
 };
 
@@ -25,7 +25,7 @@ const createCard = async (req, res) => {
     } else {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
-        .send({ message: err.message });
+        .send(MESSAGES['500_INTERNAL_SERVER_ERROR']);
     }
   }
 };
@@ -48,7 +48,7 @@ const deleteCardById = async (req, res) => {
     } else {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
-        .send({ message: err.message });
+        .send(MESSAGES['500_INTERNAL_SERVER_ERROR']);
     }
   }
 };
@@ -73,7 +73,7 @@ const likeCard = async (req, res) => {
     } else {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
-        .send({ message: err.message });
+        .send(MESSAGES['500_INTERNAL_SERVER_ERROR']);
     }
   }
 };
@@ -98,7 +98,7 @@ const dislikeCard = async (req, res) => {
     } else {
       res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
-        .send({ message: err.message });
+        .send(MESSAGES['500_INTERNAL_SERVER_ERROR']);
     }
   }
 };

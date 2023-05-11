@@ -8,7 +8,7 @@ const STATUS_CODES = {
 const MESSAGES = {
   '400_BAD_REQUEST': 'Переданы некорректные данные',
   '404_NOT_FOUND': 'Запрашиваемые данные не найдены',
-  // '500_INTERNAL_SERVER_ERROR': 'Ошибка по умолчанию',
+  '500_INTERNAL_SERVER_ERROR': '«На сервере произошла ошибка',
 };
 
 module.exports = { STATUS_CODES, MESSAGES };
