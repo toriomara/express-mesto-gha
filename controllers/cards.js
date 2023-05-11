@@ -88,15 +88,15 @@ const dislikeCard = async (req, res) => {
     res.status(STATUS_CODES['200_OK']).send(cards);
   } catch (err) {
     if (err.name === 'DocumentNotFoundError') {
-      return res
+      res
         .status(STATUS_CODES['404_NOT_FOUND'])
         .send(`Передан несуществующий _id карточки`);
     } else if (err.name === 'CastError') {
-      return res
+      res
         .status(STATUS_CODES['400_BAD_REQUEST'])
         .send(`{MESSAGES['400_BAD_REQUEST']} для постановки лайка`);
     } else {
-      return res
+      res
         .status(STATUS_CODES['500_INTERNAL_SERVER_ERROR'])
         .send({ message: err.message });
     }
