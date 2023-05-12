@@ -32,7 +32,7 @@ const createCard = async (req, res) => {
 
 const deleteCardById = async (req, res) => {
   try {
-    const cardId = req.params.cardId;
+    const { cardId } = req.params;
     const card = await Card.findByIdAndDelete(cardId);
     if (!card) {
       res
@@ -94,7 +94,7 @@ const dislikeCard = async (req, res) => {
     } else if (err.name === 'CastError') {
       res
         .status(STATUS_CODES.BAD_REQUEST)
-        .send({ message: `${MESSAGES.BAD_REQUEST} для постановки лайка` });
+        .send({ message: `${MESSAGES.BAD_REQUEST} для снятия лайка` });
     } else {
       res
         .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
