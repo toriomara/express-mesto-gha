@@ -9,19 +9,17 @@ const app = express();
 
 app.use(express.json());
 app.use(router);
-
+app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
   req.user = {
-    _id: '6454ebbdd44e1a56bf5a7e5d',
+    _id: '645e2b1f73f8b7f08d6d4880',
   };
   next();
 });
 
-app.use(express.urlencoded({ extended: true }));
-
 const startApp = async () => {
   try {
-    await mongoose.connect(DB_URL, { useNewUrlParser: true });
+    await mongoose.connect(DB_URL);
     app.listen(PORT, () => {
       console.log(`App listening on port ${PORT}`);
     });
