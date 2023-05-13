@@ -64,8 +64,9 @@ const updateUser = async (req, res) => {
         runValidators: true,
       }
     ).orFail();
-    const updatedUser = await user.findById(req.user._id);
-    res.status(STATUS_CODES.OK).send(updatedUser);
+    // const updatedUser = await user.findById(req.user._id);
+    // res.status(STATUS_CODES.OK).send(updatedUser);
+    res.status(STATUS_CODES.OK).send(user);
   } catch (err) {
     if (err.name === 'ValidationError') {
       res
