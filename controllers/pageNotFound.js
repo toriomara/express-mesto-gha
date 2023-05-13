@@ -2,9 +2,7 @@ const { STATUS_CODES, MESSAGES } = require('../utils/constants');
 
 const pageNotFound = async (req, res) => {
   try {
-    res
-      .status(STATUS_CODES.NOT_FOUND)
-      .send({ message: `Oops! Page Not Found` });
+    res.status(STATUS_CODES.NOT_FOUND).send(MESSAGES.NOT_FOUND);
   } catch (err) {
     res
       .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
