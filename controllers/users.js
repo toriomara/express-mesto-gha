@@ -4,9 +4,9 @@ const { STATUS_CODES, MESSAGES } = require('../utils/constants');
 const getUsers = async (req, res) => {
   try {
     const users = await User.find({});
-    res.status(STATUS_CODES.OK).send(users);
+    return res.send(users);
   } catch (err) {
-    res
+    return res
       .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
       .send({ message: MESSAGES.INTERNAL_SERVER_ERROR });
   }
@@ -15,21 +15,21 @@ const getUsers = async (req, res) => {
 const getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.userId).orFail();
-    res.status(STATUS_CODES.OK).send(user);
+    return res.send(user);
   } catch (err) {
     if (err.name === 'CastError') {
-      res
+      return res
         .status(STATUS_CODES.BAD_REQUEST)
         .send({ message: `${MESSAGES.BAD_REQUEST}` });
-    } else if (err.name === 'DocumentNotFoundError') {
-      res
-        .status(STATUS_CODES.NOT_FOUND)
-        .send({ message: `Пользователь по указанному _id не найден` });
-    } else {
-      res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .send({ message: MESSAGES.INTERNAL_SERVER_ERROR });
     }
+    if (err.name === 'DocumentNotFoundError') {
+      return res
+        .status(STATUS_CODES.NOT_FOUND)
+        .send({ message: 'Пользователь по указанному _id не найден' });
+    }
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send({ message: MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -37,17 +37,16 @@ const createUser = async (req, res) => {
   try {
     const { name, about, avatar } = req.body;
     const user = await User.create({ name, about, avatar });
-    res.status(STATUS_CODES.OK).send(user);
+    return res.send(user);
   } catch (err) {
     if (err.name === 'ValidationError') {
-      res.status(STATUS_CODES.BAD_REQUEST).send({
+      return res.status(STATUS_CODES.BAD_REQUEST).send({
         message: `${MESSAGES.BAD_REQUEST} при создании пользователя`,
       });
-    } else {
-      res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .send({ message: MESSAGES.INTERNAL_SERVER_ERROR });
     }
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send({ message: MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -60,23 +59,23 @@ const updateUser = async (req, res) => {
       {
         new: true,
         runValidators: true,
-      }
+      },
     ).orFail();
-    res.status(STATUS_CODES.OK).send(user);
+    return res.send(user);
   } catch (err) {
     if (err.name === 'ValidationError') {
-      res
+      return res
         .status(STATUS_CODES.BAD_REQUEST)
         .send({ message: `${MESSAGES.BAD_REQUEST} при обновлении профиля` });
-    } else if (err.name === 'DocumentNotFoundError') {
-      res
-        .status(STATUS_CODES.NOT_FOUND)
-        .send({ message: `Пользователь с указанным _id не найден` });
-    } else {
-      res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .send({ message: MESSAGES.INTERNAL_SERVER_ERROR });
     }
+    if (err.name === 'DocumentNotFoundError') {
+      return res
+        .status(STATUS_CODES.NOT_FOUND)
+        .send({ message: 'Пользователь с указанным _id не найден' });
+    }
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send({ message: MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -89,23 +88,23 @@ const updateAvatar = async (req, res) => {
       {
         new: true,
         runValidators: true,
-      }
+      },
     ).orFail();
-    res.status(STATUS_CODES.OK).send(user);
+    return res.send(user);
   } catch (err) {
     if (err.name === 'ValidationError') {
-      res
+      return res
         .status(STATUS_CODES.BAD_REQUEST)
         .send({ message: `${MESSAGES.BAD_REQUEST} при обновлении аватара` });
-    } else if (err.name === 'DocumentNotFoundError') {
-      res
-        .status(STATUS_CODES.NOT_FOUND)
-        .send({ message: `Пользователь с указанным _id не найден` });
-    } else {
-      res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .send({ message: MESSAGES.INTERNAL_SERVER_ERROR });
     }
+    if (err.name === 'DocumentNotFoundError') {
+      return res
+        .status(STATUS_CODES.NOT_FOUND)
+        .send({ message: 'Пользователь с указанным _id не найден' });
+    }
+    return res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send({ message: MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
