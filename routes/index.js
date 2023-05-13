@@ -1,9 +1,9 @@
 const router = require('express').Router();
 const userRouter = require('./users');
 const cardsRouter = require('./cards');
-const { pageNotFound } = require('./pageNotFound');
+const unpathRouter = require('./unpath');
 
 router.use('/users', userRouter);
 router.use('/cards', cardsRouter);
-router.use('*', pageNotFound);
+router.use('*', unpathRouter);
 module.exports = router;

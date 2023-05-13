@@ -1,6 +1,3 @@
-{
-  /* <h1>Oops! Page Not Found</h1> */
-}
 const { STATUS_CODES, MESSAGES } = require('../utils/constants');
 
 const pageNotFound = async (req, res) => {
