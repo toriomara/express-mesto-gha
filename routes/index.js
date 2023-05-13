@@ -5,5 +5,5 @@ const unpathRouter = require('./unpath');
 
 router.use('/users', userRouter);
 router.use('/cards', cardsRouter);
-router.use('*', unpathRouter);
+router.use('/*', unpathRouter);
 module.exports = router;
