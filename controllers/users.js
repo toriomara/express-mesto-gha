@@ -53,6 +53,8 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
+    console.log(req.user);
+    console.log(req.praktikum);
     const { name, about } = req.body;
     const user = await User.findByIdAndUpdate(
       req.user._id,
@@ -62,7 +64,7 @@ const updateUser = async (req, res) => {
         runValidators: true,
       }
     ).orFail();
-    const updatedUser = await User.findById(req.user._id);
+    const updatedUser = await user.findById(req.user._id);
     res.status(STATUS_CODES.OK).send(updatedUser);
   } catch (err) {
     if (err.name === 'ValidationError') {
