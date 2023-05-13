@@ -19,7 +19,6 @@
     "lint": "npx eslint"
   },
   "devDependencies": {
-    "body-parser": "^1.20.2",
     "nodemon": "^2.0.22"
   }
 }
