@@ -11,7 +11,6 @@ app.use((req, res, next) => {
   req.user = {
     _id: '645e2b1f73f8b7f08d6d4880',
   };
-  req.praktikum = true;
   next();
 });
 app.use(express.json());
