@@ -24,9 +24,10 @@ const createUser = async (req, res, next) => {
     if (err.code === 11000) {
       return next(new ConflictError('Такой пользователь уже существует'));
     }
-    if (err.name === 'ValidationError' || err.name === 'CastError') {
-      return next(new BadRequestError(MESSAGES.BAD_REQUEST));
-    } return next(err);
+    // if (err.name === 'ValidationError' || err.name === 'CastError') {
+    //   return next(new BadRequestError(MESSAGES.BAD_REQUEST));
+    // }
+    return next(err);
   }
 };
 
