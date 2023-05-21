@@ -1,56 +1,83 @@
+const bcrypt = require('bcrypt');
 const User = require('../models/user');
-const { STATUS_CODES, MESSAGES } = require('../utils/constants');
+const { getJwtToken } = require('../utils/jwt');
+const { MESSAGES } = require('../utils/constants');
+const BadRequestError = require('../errors');
+const NotFoundError = require('../errors');
+const ConflictError = require('../errors');
 
-const getUsers = async (req, res) => {
+const createUser = async (req, res, next) => {
+  try {
+    const {
+      name, about, avatar, email, password,
+    } = req.body;
+    const saltRounds = 10;
+    if (!email || !password) {
+      return next(new BadRequestError('Email или пароль не могут быть пустыми'));
+    }
+    const hashPassword = await bcrypt.hash(password, saltRounds);
+    const user = await User.create({
+      name, about, avatar, email, password: hashPassword,
+    });
+    return res.send({ message: `Пользователь ${user.name} успешно создан` });
+  } catch (err) {
+    if (err.code === 11000) {
+      return next(new ConflictError('Такой пользователь уже существует'));
+    }
+    if (err.name === 'ValidationError' || err.name === 'CastError') {
+      return next(new BadRequestError(MESSAGES.BAD_REQUEST));
+    } return next(err);
+  }
+};
+
+const login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return next(new BadRequestError('Email или пароль не могут быть пустыми'));
+    }
+    const user = await User.findOne({ email }).select('+password');
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!user || !isValidPassword) {
+      return next(new BadRequestError(MESSAGES.UNAUTHORIZED));
+    }
+    const token = getJwtToken(user._id);
+    // return res.send({ token }); // Передать через куки httpOnly
+    return res.cookie('jwt', token, {
+      maxAge: 3600000 * 24 * 7,
+      httpOnly: true,
+    })
+      .end();
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const getUsers = async (req, res, next) => {
   try {
     const users = await User.find({});
     return res.send(users);
   } catch (err) {
-    return res
-      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-      .send({ message: MESSAGES.INTERNAL_SERVER_ERROR });
+    return next(err);
   }
 };
 
-const getUserById = async (req, res) => {
+const getUserById = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.userId).orFail();
     return res.send(user);
   } catch (err) {
     if (err.name === 'CastError') {
-      return res
-        .status(STATUS_CODES.BAD_REQUEST)
-        .send({ message: `${MESSAGES.BAD_REQUEST}` });
+      return next(new BadRequestError(MESSAGES.BAD_REQUEST));
     }
     if (err.name === 'DocumentNotFoundError') {
-      return res
-        .status(STATUS_CODES.NOT_FOUND)
-        .send({ message: 'Пользователь по указанному _id не найден' });
+      return next(new NotFoundError('Пользователь по указанному _id не найден'));
     }
-    return res
-      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-      .send({ message: MESSAGES.INTERNAL_SERVER_ERROR });
+    return next(err);
   }
 };
 
-const createUser = async (req, res) => {
-  try {
-    const { name, about, avatar } = req.body;
-    const user = await User.create({ name, about, avatar });
-    return res.send(user);
-  } catch (err) {
-    if (err.name === 'ValidationError') {
-      return res.status(STATUS_CODES.BAD_REQUEST).send({
-        message: `${MESSAGES.BAD_REQUEST} при создании пользователя`,
-      });
-    }
-    return res
-      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-      .send({ message: MESSAGES.INTERNAL_SERVER_ERROR });
-  }
-};
-
-const updateUser = async (req, res) => {
+const updateUser = async (req, res, next) => {
   try {
     const { name, about } = req.body;
     const user = await User.findByIdAndUpdate(
@@ -64,22 +91,16 @@ const updateUser = async (req, res) => {
     return res.send(user);
   } catch (err) {
     if (err.name === 'ValidationError') {
-      return res
-        .status(STATUS_CODES.BAD_REQUEST)
-        .send({ message: `${MESSAGES.BAD_REQUEST} при обновлении профиля` });
+      return next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при обновлении профиля`));
     }
     if (err.name === 'DocumentNotFoundError') {
-      return res
-        .status(STATUS_CODES.NOT_FOUND)
-        .send({ message: 'Пользователь с указанным _id не найден' });
+      return next(new NotFoundError('Пользователь по указанному _id не найден'));
     }
-    return res
-      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-      .send({ message: MESSAGES.INTERNAL_SERVER_ERROR });
+    return next(err);
   }
 };
 
-const updateAvatar = async (req, res) => {
+const updateAvatar = async (req, res, next) => {
   try {
     const { avatar } = req.body;
     const user = await User.findByIdAndUpdate(
@@ -93,18 +114,12 @@ const updateAvatar = async (req, res) => {
     return res.send(user);
   } catch (err) {
     if (err.name === 'ValidationError') {
-      return res
-        .status(STATUS_CODES.BAD_REQUEST)
-        .send({ message: `${MESSAGES.BAD_REQUEST} при обновлении аватара` });
+      return next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при обновлении аватара`));
     }
     if (err.name === 'DocumentNotFoundError') {
-      return res
-        .status(STATUS_CODES.NOT_FOUND)
-        .send({ message: 'Пользователь с указанным _id не найден' });
+      return next(new NotFoundError('Пользователь по указанному _id не найден'));
     }
-    return res
-      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-      .send({ message: MESSAGES.INTERNAL_SERVER_ERROR });
+    return next(err);
   }
 };
 
@@ -114,4 +129,5 @@ module.exports = {
   createUser,
   updateUser,
   updateAvatar,
+  login,
 };

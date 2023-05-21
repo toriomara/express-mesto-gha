@@ -1,57 +1,48 @@
 const Card = require('../models/card');
-const { STATUS_CODES, MESSAGES } = require('../utils/constants');
+const BadRequestError = require('../errors');
+const NotFoundError = require('../errors');
+// const ConflictError = require('../errors');
+const { MESSAGES } = require('../utils/constants');
 
-const getCards = async (req, res) => {
+const getCards = async (req, res, next) => {
   try {
     const cards = await Card.find({});
     return res.send(cards);
   } catch (err) {
-    return res
-      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-      .send({ message: MESSAGES.INTERNAL_SERVER_ERROR });
+    return next(err);
   }
 };
 
-const createCard = async (req, res) => {
+const createCard = async (req, res, next) => {
   try {
     const { name, link } = req.body;
     const card = await Card.create({ name, link, owner: req.user._id });
     return res.send(card);
   } catch (err) {
     if (err.name === 'ValidationError') {
-      return res
-        .status(STATUS_CODES.BAD_REQUEST)
-        .send({ message: `${MESSAGES.BAD_REQUEST} при создании карточки` });
+      return next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при создании карточки`));
     }
-    return res
-      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-      .send({ message: MESSAGES.INTERNAL_SERVER_ERROR });
+    return next(err);
   }
 };
 
-const deleteCardById = async (req, res) => {
+const deleteCardById = async (req, res, next) => {
   try {
     const { cardId } = req.params;
     const card = await Card.findByIdAndDelete(cardId);
     if (!card) {
-      return res
-        .status(STATUS_CODES.NOT_FOUND)
-        .send({ message: 'Карточка с указанным _id не найдена' });
+      return next(new NotFoundError('Карточка с указанным _id не найдена'));
     }
     return res.send(card);
   } catch (err) {
     if (err.name === 'CastError') {
-      return res
-        .status(STATUS_CODES.BAD_REQUEST)
-        .send({ message: MESSAGES.BAD_REQUEST });
+      return next(new BadRequestError(MESSAGES.BAD_REQUEST));
     }
-    return res
-      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-      .send({ message: MESSAGES.INTERNAL_SERVER_ERROR });
+    return next(err);
   }
 };
 
-const likeCard = async (req, res) => {
+const likeCard = async (req, res, next) => {
   try {
     const cards = await Card.findByIdAndUpdate(
       req.params.cardId,
@@ -61,22 +52,16 @@ const likeCard = async (req, res) => {
     return res.send(cards);
   } catch (err) {
     if (err.name === 'DocumentNotFoundError') {
-      return res
-        .status(STATUS_CODES.NOT_FOUND)
-        .send({ message: 'Передан несуществующий _id карточки' });
+      return next(new NotFoundError('Передан несуществующий _id карточки'));
     }
     if (err.name === 'CastError') {
-      return res
-        .status(STATUS_CODES.BAD_REQUEST)
-        .send({ message: `${MESSAGES.BAD_REQUEST} для постановки лайка` });
+      return next(new NotFoundError(`${MESSAGES.BAD_REQUEST} для постановки лайка`));
     }
-    return res
-      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-      .send({ message: MESSAGES.INTERNAL_SERVER_ERROR });
+    return next(err);
   }
 };
 
-const dislikeCard = async (req, res) => {
+const dislikeCard = async (req, res, next) => {
   try {
     const cards = await Card.findByIdAndUpdate(
       req.params.cardId,
@@ -86,18 +71,12 @@ const dislikeCard = async (req, res) => {
     return res.send(cards);
   } catch (err) {
     if (err.name === 'DocumentNotFoundError') {
-      return res
-        .status(STATUS_CODES.NOT_FOUND)
-        .send({ message: 'Передан несуществующий _id карточки' });
+      return next(new NotFoundError('Передан несуществующий _id карточки'));
     }
     if (err.name === 'CastError') {
-      return res
-        .status(STATUS_CODES.BAD_REQUEST)
-        .send({ message: `${MESSAGES.BAD_REQUEST} для снятия лайка` });
+      return next(new NotFoundError(`${MESSAGES.BAD_REQUEST} для снятия лайка`));
     }
-    return res
-      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-      .send({ message: MESSAGES.INTERNAL_SERVER_ERROR });
+    return next(err);
   }
 };
 
