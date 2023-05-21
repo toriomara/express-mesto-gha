@@ -9,12 +9,13 @@ const isAuthorized = async (req, res, token) => {
     // const data = await jwt.verify(token, JWT_KEY);
     const data = jwt.verify(token, JWT_KEY);
     // return !!data;
-    if (data) {
-      return res.cookie('jwt', token, {
+    return res.cookie(
+      data,
+      ('jwt', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
-      });
-    } return res.send({ message: 'Hello World!' });
+      }),
+    );
   } catch (err) {
     return false;
   }
