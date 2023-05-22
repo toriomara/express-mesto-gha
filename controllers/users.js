@@ -16,11 +16,13 @@ const createUser = async (req, res, next) => {
       return next(new BadRequestError('Email или пароль не могут быть пустыми'));
     }
     const hashPassword = await bcrypt.hash(password, saltRounds);
-    const user = await User.create({
+    await User.create({
       name, about, avatar, email, password: hashPassword,
     });
     // return res.send({ message: `Пользователь ${user.name} успешно создан` });
-    return res.send({ user });
+    return res.send({
+      name, about, avatar, email,
+    });
   } catch (err) {
     if (err.code === 11000) {
       return next(new ConflictError('Такой пользователь уже существует'));
@@ -45,10 +47,6 @@ const login = async (req, res, next) => {
     }
     const token = getJwtToken(user._id);
     return res.send({ token }); // Передать через куки httpOnly
-    // return res.cookie('jwt', token, {
-    //   maxAge: 3600000 * 24 * 7,
-    //   httpOnly: true,
-    // });
   } catch (err) {
     return next(err);
   }
