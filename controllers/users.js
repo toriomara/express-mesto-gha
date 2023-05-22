@@ -45,7 +45,12 @@ const login = async (req, res, next) => {
       return next(new BadRequestError(MESSAGES.UNAUTHORIZED));
     }
     const token = getJwtToken(user._id);
-    return res.send({ token }); // Передать через куки httpOnly
+    // return res.send({ token });
+    res.cokie('jwt', token, {
+      maxAge: 3600000 * 24 * 7,
+      httpOnly: true,
+      sameSite: true,
+    });
   } catch (err) {
     return next(err);
   }
