@@ -3,12 +3,15 @@ const userRoutes = require('./users');
 const cardsRoutes = require('./cards');
 const { STATUS_CODES, MESSAGES } = require('../utils/constants');
 const auth = require('../middlewares/auth');
+const {
+  validateSignup,
+  validateSignin,
+} = require('../utils/validation');
 
-// const { createUser, login } = require('../controllers/users');
-const authRoutes = require('./auth');
+const { createUser, login } = require('../controllers/users');
 
-router.use('/signup', authRoutes);
-router.use('/signin', authRoutes);
+router.post('/signup', validateSignup, createUser);
+router.post('/signin', validateSignin, login);
 
 router.use('/users', auth, userRoutes);
 router.use('/cards', auth, cardsRoutes);
