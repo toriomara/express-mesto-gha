@@ -19,17 +19,16 @@ const createUser = async (req, res, next) => {
     await User.create({
       name, about, avatar, email, password: hashPassword,
     });
-    // return res.send({ message: `Пользователь ${user.name} успешно создан` });
     return res.send({
       name, about, avatar, email,
     });
   } catch (err) {
+    if (err.name === 'ValidationError' || err.name === 'CastError') {
+      return next(new BadRequestError(MESSAGES.BAD_REQUEST));
+    }
     if (err.code === 11000) {
       return next(new ConflictError('Такой пользователь уже существует'));
     }
-    // if (err.name === 'ValidationError' || err.name === 'CastError') {
-    //   return next(new BadRequestError(MESSAGES.BAD_REQUEST));
-    // }
     return next(err);
   }
 };
