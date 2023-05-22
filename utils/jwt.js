@@ -6,8 +6,7 @@ const getJwtToken = (id) => jwt.sign({ id }, JWT_KEY, { expiresIn: '7d' });
 
 const isAuthorized = async (req, res, token) => {
   try {
-    // const data = await jwt.verify(token, JWT_KEY);
-    const data = jwt.verify(token, JWT_KEY);
+    const data = await jwt.verify(token, JWT_KEY);
     // return !!data;
     return res.cookie(
       data,

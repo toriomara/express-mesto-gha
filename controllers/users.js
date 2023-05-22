@@ -19,7 +19,8 @@ const createUser = async (req, res, next) => {
     const user = await User.create({
       name, about, avatar, email, password: hashPassword,
     });
-    return res.send({ message: `Пользователь ${user.name} успешно создан` });
+    // return res.send({ message: `Пользователь ${user.name} успешно создан` });
+    return res.send({ user });
   } catch (err) {
     if (err.code === 11000) {
       return next(new ConflictError('Такой пользователь уже существует'));
