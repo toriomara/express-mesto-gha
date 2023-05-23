@@ -36,8 +36,8 @@ const createUser = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    const isValidPassword = await bcrypt.compare(password, user.password);
     const user = await User.findOne({ email }).select('+password');
+    const isValidPassword = await bcrypt.compare(password, user.password);
     if (!email || !password) {
       return next(new UnauthorizedError('Email или пароль не могут быть пустыми'));
     }
