@@ -2,9 +2,9 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const { getJwtToken } = require('../utils/jwt');
 const { MESSAGES } = require('../utils/constants');
-const BadRequestError = require('../errors');
-const NotFoundError = require('../errors');
-const ConflictError = require('../errors');
+const { BadRequestError } = require('../errors');
+const { NotFoundError } = require('../errors');
+const { ConflictError } = require('../errors');
 
 const createUser = async (req, res, next) => {
   try {
@@ -46,7 +46,7 @@ const login = async (req, res, next) => {
     }
     const token = getJwtToken(user._id);
     // return res.send({ token });
-    res.cokie('jwt', token, {
+    return res.cokie('jwt', token, {
       maxAge: 3600000 * 24 * 7,
       httpOnly: true,
       sameSite: true,
