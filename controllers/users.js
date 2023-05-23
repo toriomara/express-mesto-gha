@@ -36,9 +36,9 @@ const createUser = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) {
-      return next(new UnauthorizedError('Email или пароль не могут быть пустыми'));
-    }
+    // if (!email || !password) {
+    //   return next(new UnauthorizedError('Email или пароль не могут быть пустыми'));
+    // }
     const user = await User.findOne({ email }).select('+password');
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!user || !isValidPassword) {
@@ -70,12 +70,12 @@ const getUserById = async (req, res, next) => {
     const user = await User.findById(req.params.userId).orFail();
     return res.send(user);
   } catch (err) {
-    // if (err.name === 'CastError') {
-    //   return next(new BadRequestError(MESSAGES.BAD_REQUEST));
-    // }
-    // if (err.name === 'DocumentNotFoundError') {
-    //   return next(new NotFoundError('Пользователь по указанному _id не найден'));
-    // }
+    if (err.name === 'CastError') {
+      return next(new BadRequestError(MESSAGES.BAD_REQUEST));
+    }
+    if (err.name === 'DocumentNotFoundError') {
+      return next(new NotFoundError('Пользователь по указанному _id не найден'));
+    }
     return next(err);
   }
 };
