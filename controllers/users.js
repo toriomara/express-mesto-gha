@@ -34,26 +34,22 @@ const createUser = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return next(new UnauthorizedError('Email или пароль не могут быть пустыми'));
-    }
-    const user = await User.findOne({ email }).select('+password');
-    const isValidPassword = await bcrypt.compare(password, user.password);
-    if (!user || !isValidPassword) {
-      return next(new UnauthorizedError(MESSAGES.UNAUTHORIZED));
-    }
-    const token = getJwtToken(user._id);
-    // return res.send({ token });
-    return res.cokie('jwt', token, {
-      maxAge: 3600000 * 24 * 7,
-      httpOnly: true,
-      sameSite: true,
-    });
-  } catch (err) {
-    return next(err);
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return next(new UnauthorizedError('Email или пароль не могут быть пустыми'));
   }
+  const user = await User.findOne({ email }).select('+password');
+  const isValidPassword = await bcrypt.compare(password, user.password);
+  if (!user || !isValidPassword) {
+    return next(new UnauthorizedError(MESSAGES.UNAUTHORIZED));
+  }
+  const token = getJwtToken(user._id);
+  // return res.send({ token });
+  return res.cokie('jwt', token, {
+    maxAge: 3600000 * 24 * 7,
+    httpOnly: true,
+    sameSite: true,
+  }).catch(next);
 };
 
 const getUsers = async (req, res, next) => {
