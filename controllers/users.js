@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const { getJwtToken } = require('../utils/jwt');
 const { MESSAGES } = require('../utils/constants');
-const { BadRequestError } = require('../errors');
+const { BadRequestError, UnauthorizedError } = require('../errors');
 const { NotFoundError } = require('../errors');
 const { ConflictError } = require('../errors');
 
@@ -37,12 +37,12 @@ const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return next(new BadRequestError('Email или пароль не могут быть пустыми'));
+      return next(new UnauthorizedError('Email или пароль не могут быть пустыми'));
     }
     const user = await User.findOne({ email }).select('+password');
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!user || !isValidPassword) {
-      return next(new BadRequestError(MESSAGES.UNAUTHORIZED));
+      return next(new UnauthorizedError(MESSAGES.UNAUTHORIZED));
     }
     const token = getJwtToken(user._id);
     // return res.send({ token });
