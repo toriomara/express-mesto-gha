@@ -3,11 +3,8 @@ const User = require('../models/user');
 const { getJwtToken } = require('../utils/jwt');
 const { MESSAGES } = require('../utils/constants');
 const {
-  BadRequestError, UnauthorizedError, NotFoundError,
-} = require('../errors/index');
-const {
-  ConflictError,
-} = require('../errors/conflictError');
+  BadRequestError, UnauthorizedError, NotFoundError, ConflictError,
+} = require('../errors');
 
 const createUser = async (req, res, next) => {
   try {
@@ -36,28 +33,43 @@ const createUser = async (req, res, next) => {
   }
 };
 
-const login = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email }).select('+password');
-    if (!email || !password) {
-      return next(new UnauthorizedError('Email или пароль не могут быть пустыми'));
-    }
-    const isValidPassword = await bcrypt.compare(password, user.password);
-    if (!user || !isValidPassword) {
-      return next(new UnauthorizedError(MESSAGES.UNAUTHORIZED));
-    }
-    const token = getJwtToken(user._id);
-    // return res.send({ token });
-    return res.cokie('jwt', token, {
-      maxAge: 3600000 * 24 * 7,
-      httpOnly: true,
-      sameSite: true,
-    });
-  } catch (err) {
-    return next(err);
-  }
-};
+function login(req, res, next) {
+  const { email, password } = req.body;
+  return User.findOne(email, password).select('+password')
+    .then((user) => {
+      const token = getJwtToken(user._id);
+      res
+        .cookie('jwt', token, {
+          maxAge: 3600000 * 24 * 7,
+          httpOnly: true,
+        })
+        .send({ jwt: token });
+    })
+    .catch(next);
+}
+
+// const login = async (req, res, next) => {
+//   try {
+//     const { email, password } = req.body;
+//     const user = await User.findOne({ email }).select('+password');
+//     if (!email || !password) {
+//       return next(new UnauthorizedError('Email или пароль не могут быть пустыми'));
+//     }
+//     const isValidPassword = await bcrypt.compare(password, user.password);
+//     if (!user || !isValidPassword) {
+//       return next(new UnauthorizedError(MESSAGES.UNAUTHORIZED));
+//     }
+//     const token = getJwtToken(user._id);
+//     // return res.send({ token });
+//     return res.cokie('jwt', token, {
+//       maxAge: 3600000 * 24 * 7,
+//       httpOnly: true,
+//       sameSite: true,
+//     });
+//   } catch (err) {
+//     return next(err);
+//   }
+// };
 
 const getUsers = async (req, res, next) => {
   try {
