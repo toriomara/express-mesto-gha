@@ -31,8 +31,7 @@ const deleteCardById = async (req, res, next) => {
     const { cardId } = req.params;
     const card = await Card.findById(cardId).populate('owner');
     if (!card) {
-      // return next(new NotFoundError('Карточка с указанным _id не найдена'));
-      throw new NotFoundError('Карточка с указанным _id не найдена');
+      throw new UnauthorizedError('Карточка с указанным _id не найдена');
     }
     const ownerId = card.owner.id;
     const userId = req.user._id;
