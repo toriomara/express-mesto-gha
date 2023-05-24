@@ -3,7 +3,7 @@ const User = require('../models/user');
 const { getJwtToken } = require('../utils/jwt');
 const { MESSAGES } = require('../utils/constants');
 const {
-  BadRequestError, UnauthorizedError, NotFoundError, ConflictError,
+  BadRequestError, NotFoundError, ConflictError,
 } = require('../errors');
 
 const createUser = async (req, res, next) => {
@@ -34,8 +34,8 @@ const createUser = async (req, res, next) => {
 };
 
 function login(req, res, next) {
-  const { email, password } = req.body;
-  return User.findOne(email, password).select('+password')
+  const { email } = req.body;
+  return User.findOne(email).select('+password')
     .then((user) => {
       const token = getJwtToken(user._id);
       res

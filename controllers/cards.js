@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-const { BadRequestError, NotFoundError } = require('../errors');
+const { BadRequestError, NotFoundError, ForbiddenError } = require('../errors');
 const { MESSAGES } = require('../utils/constants');
 
 const getCards = async (req, res, next) => {
@@ -27,31 +27,34 @@ const createCard = async (req, res, next) => {
 const deleteCardById = async (req, res, next) => {
   try {
     const { cardId } = req.params;
-    const card = await Card.findByIdAndDelete(cardId);
+    const card = await Card.findById(cardId).populate('owner');
     if (!card) {
-      return next(new NotFoundError('Карточка с указанным _id не найдена'));
+      // return next(new NotFoundError('Карточка с указанным _id не найдена'));
+      throw new NotFoundError('Карточка с указанным _id не найдена');
+    }
+    const ownerId = card.owner.id;
+    const userId = req.user._id;
+    if (ownerId !== userId) {
+      throw new ForbiddenError('Невозможно удалить чужую карточку');
     }
     return res.send(card);
   } catch (err) {
-    if (err.name === 'CastError') {
-      return next(new BadRequestError(MESSAGES.BAD_REQUEST));
-    }
     return next(err);
   }
 };
 
 const likeCard = async (req, res, next) => {
   try {
-    const cards = await Card.findByIdAndUpdate(
+    const card = await Card.findByIdAndUpdate(
       req.params.cardId,
       { $addToSet: { likes: req.user._id } },
       { new: true },
     ).orFail();
-    return res.send(cards);
-  } catch (err) {
-    if (err.name === 'DocumentNotFoundError') {
-      return next(new NotFoundError('Передан несуществующий _id карточки'));
+    if (!card) {
+      throw new NotFoundError(MESSAGES.NOT_FOUND);
     }
+    return res.send(card);
+  } catch (err) {
     if (err.name === 'CastError') {
       return next(new NotFoundError(`${MESSAGES.BAD_REQUEST} для постановки лайка`));
     }
@@ -61,16 +64,16 @@ const likeCard = async (req, res, next) => {
 
 const dislikeCard = async (req, res, next) => {
   try {
-    const cards = await Card.findByIdAndUpdate(
+    const card = await Card.findByIdAndUpdate(
       req.params.cardId,
       { $pull: { likes: req.user._id } },
       { new: true },
     ).orFail();
-    return res.send(cards);
-  } catch (err) {
-    if (err.name === 'DocumentNotFoundError') {
-      return next(new NotFoundError('Передан несуществующий _id карточки'));
+    if (!card) {
+      throw new NotFoundError(MESSAGES.NOT_FOUND);
     }
+    return res.send(card);
+  } catch (err) {
     if (err.name === 'CastError') {
       return next(new NotFoundError(`${MESSAGES.BAD_REQUEST} для снятия лайка`));
     }
