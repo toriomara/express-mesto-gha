@@ -34,8 +34,9 @@ const createUser = async (req, res, next) => {
 };
 
 function login(req, res, next) {
-  const { email } = req.body;
-  return User.findOne(email).select('+password')
+  const { email, password } = req.body;
+  // return User.findOne(email).select('+password')
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = getJwtToken(user._id);
       res
