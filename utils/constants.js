@@ -16,4 +16,6 @@ const MESSAGES = {
   INTERNAL_SERVER_ERROR: 'На сервере произошла ошибка',
 };
 
-module.exports = { STATUS_CODES, MESSAGES };
+const REGEX_URL = /(https?:\/\/)(w{3}\.)?(((\d{1,3}\.){3}\d{1,3})|((\w-?)+\.(ru|com)))(:\d{2,5})?((\/.+)+)?\/?#?/;
+
+module.exports = { STATUS_CODES, MESSAGES, REGEX_URL };

@@ -1,13 +1,12 @@
 const { celebrate, Joi } = require('celebrate');
+const { REGEX_URL } = require('./constants');
 // Joi.objectId = require('joi-objectid')(Joi);
-
-const REGEX = /(https?:\/\/)(w{3}\.)?(((\d{1,3}\.){3}\d{1,3})|((\w-?)+\.(ru|com)))(:\d{2,5})?((\/.+)+)?\/?#?/;
 
 const validateSignup = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(REGEX),
+    avatar: Joi.string().pattern(REGEX_URL),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
@@ -36,14 +35,14 @@ const validateUserUpdate = celebrate({
 
 const validateUserAvatar = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().pattern(REGEX),
+    avatar: Joi.string().pattern(REGEX_URL),
   }),
 });
 
 const validateCardCreate = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().pattern(REGEX),
+    link: Joi.string().pattern(REGEX_URL),
   }),
 });
 
