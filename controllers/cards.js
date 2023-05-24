@@ -1,7 +1,5 @@
 const Card = require('../models/card');
-const { BadRequestError } = require('../errors');
-const { NotFoundError } = require('../errors');
-// const ConflictError = require('../errors');
+const { BadRequestError, NotFoundError } = require('../errors');
 const { MESSAGES } = require('../utils/constants');
 
 const getCards = async (req, res, next) => {

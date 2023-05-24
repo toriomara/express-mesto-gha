@@ -3,8 +3,11 @@ const User = require('../models/user');
 const { getJwtToken } = require('../utils/jwt');
 const { MESSAGES } = require('../utils/constants');
 const {
-  BadRequestError, UnauthorizedError, NotFoundError, ConflictError,
-} = require('../errors');
+  BadRequestError, UnauthorizedError, NotFoundError,
+} = require('../errors/index');
+const {
+  ConflictError,
+} = require('../errors/conflictError');
 
 const createUser = async (req, res, next) => {
   try {
