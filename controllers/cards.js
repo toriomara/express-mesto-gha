@@ -1,5 +1,7 @@
 const Card = require('../models/card');
-const { BadRequestError, NotFoundError, ForbiddenError } = require('../errors');
+const {
+  BadRequestError, NotFoundError, UnauthorizedError,
+} = require('../errors');
 const { MESSAGES } = require('../utils/constants');
 
 const getCards = async (req, res, next) => {
@@ -35,7 +37,7 @@ const deleteCardById = async (req, res, next) => {
     const ownerId = card.owner.id;
     const userId = req.user._id;
     if (ownerId !== userId) {
-      throw new ForbiddenError('Невозможно удалить чужую карточку');
+      throw new UnauthorizedError('Невозможно удалить чужую карточку');
     }
     return res.send(card);
   } catch (err) {
