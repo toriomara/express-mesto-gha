@@ -3,7 +3,7 @@ const User = require('../models/user');
 const { getJwtToken } = require('../utils/jwt');
 const { MESSAGES } = require('../utils/constants');
 const {
-  BadRequestError, NotFoundError, ConflictError,
+  BadRequestError, NotFoundError, ConflictError, UnauthorizedError,
 } = require('../errors');
 
 const createUser = async (req, res, next) => {
@@ -27,20 +27,29 @@ const createUser = async (req, res, next) => {
   }
 };
 
-function login(req, res, next) {
-  const { email } = req.body;
-  return User.findOne({ email }).select('+password')
-    .then((user) => {
+const login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    // const user = await User.findOne({ email }).select('+password');
+    const user = await User.findByCredentials(email, password);
+    if (!email || !password) {
+      return next(new UnauthorizedError('Email или пароль не могут быть пустыми'));
+    }
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (user || isValidPassword) {
       const token = getJwtToken(user._id);
-      res
+      return res
         .cookie('jwt', token, {
           maxAge: 3600000 * 24 * 7,
           httpOnly: true,
         })
         .send({ jwt: token });
-    })
-    .catch(next);
-}
+    }
+    return next(new UnauthorizedError(MESSAGES.UNAUTHORIZED));
+  } catch (err) {
+    return next(err);
+  }
+};
 
 const getUsers = async (req, res, next) => {
   try {
