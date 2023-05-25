@@ -28,14 +28,15 @@ const createUser = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
+  const { email, password } = req.body;
   try {
-    const { email, password } = req.body;
-    // const user = await User.findOne({ email }).select('+password');
-    const user = await User.findByCredentials(email, password);
-    if (!email || !password) {
-      return next(new UnauthorizedError('Email или пароль не могут быть пустыми'));
-    }
+    const user = User.findOne({ email }).select('+password');
+    // const user = await User.findByCredentials(email, password);
+    console.log(email);
     const isValidPassword = await bcrypt.compare(password, user.password);
+    // if (!email || !password) {
+    //   return next(new UnauthorizedError('Email или пароль не могут быть пустыми'));
+    // }
     if (user || isValidPassword) {
       const token = getJwtToken(user._id);
       return res
