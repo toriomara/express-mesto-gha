@@ -28,25 +28,27 @@ const createUser = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
-  const { email, password } = req.body;
   try {
-    const user = User.findOne({ email }).select('+password');
-    // const user = await User.findByCredentials(email, password);
+    const { email, password } = req.body;
+    const user = User.findOne(email).select('+password');
+    if (!user) {
+      return next(new NotFoundError(MESSAGES.NOT_FOUND));
+    }
     console.log(email);
     const isValidPassword = await bcrypt.compare(password, user.password);
-    // if (!email || !password) {
-    //   return next(new UnauthorizedError('Email или пароль не могут быть пустыми'));
-    // }
-    if (user || isValidPassword) {
-      const token = getJwtToken(user._id);
-      return res
-        .cookie('jwt', token, {
-          maxAge: 3600000 * 24 * 7,
-          httpOnly: true,
-        })
-        .send({ jwt: token });
+    if (!email || !password) {
+      return next(new UnauthorizedError('Email или пароль не могут быть пустыми'));
     }
-    return next(new UnauthorizedError(MESSAGES.UNAUTHORIZED));
+    if (!user || !isValidPassword) {
+      return next(new UnauthorizedError('Email или пароль не могут быть пустыми'));
+    }
+    const token = getJwtToken(user._id);
+    return res
+      .cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+      })
+      .send({ jwt: token });
   } catch (err) {
     return next(err);
   }

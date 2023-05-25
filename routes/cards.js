@@ -12,10 +12,10 @@ const {
   validateCardId,
 } = require('../utils/validation');
 
+router.delete('/:cardId/likes', validateCardId, dislikeCard);
+router.put('/:cardId/likes', validateCardId, likeCard);
+router.delete('/:cardId', validateCardId, deleteCardById);
 router.get('/', getCards);
 router.post('/', validateCardCreate, createCard);
-router.delete('/:cardId', validateCardId, deleteCardById);
-router.put('/:cardId/likes', validateCardId, likeCard);
-router.delete('/:cardId/likes', validateCardId, dislikeCard);
 
 module.exports = router;

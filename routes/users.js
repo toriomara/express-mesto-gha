@@ -11,9 +11,9 @@ const {
   validateUserAvatar,
 } = require('../utils/validation');
 
-router.get('/', getUsers);
-router.get('/:userId', validateUser, getUserById);
-router.patch('/me', validateUserUpdate, updateUser);
 router.patch('/me/avatar', validateUserAvatar, updateAvatar);
+router.patch('/me', validateUserUpdate, updateUser);
+router.get('/:userId', validateUser, getUserById);
+router.get('/', getUsers);
 
 module.exports = router;
