@@ -18,11 +18,12 @@ const createUser = async (req, res, next) => {
       name, about, avatar, email, password: hashPassword,
     }).then((user) => {
       res.send({
-        _id: user._id,
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-        email: user.email,
+        user,
+        // _id: user._id,
+        // name: user.name,
+        // about: user.about,
+        // avatar: user.avatar,
+        // email: user.email,
       });
     }).catch((err) => {
       if (err.name === 'ValidationError') {
