@@ -44,7 +44,12 @@ const login = (req, res, next) => {
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user.id }, JWT_KEY, { expiresIn: '7d' });
-      res.send({ token, message: 'Вы авторизованы' });
+      // res.send({ token, message: 'Вы авторизованы' });
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+      })
+        .send({ jwt: token });
     })
     .catch(next);
 };
