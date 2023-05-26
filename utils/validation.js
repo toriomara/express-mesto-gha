@@ -22,7 +22,7 @@ const validateSignin = celebrate({
 const validateUser = celebrate({
   params: Joi.object().keys({
     // userId: Joi.objectId(),
-    userId: Joi.string().hex().length(24),
+    userId: Joi.string().required().hex().length(24),
   }),
 });
 
@@ -42,13 +42,13 @@ const validateUserAvatar = celebrate({
 const validateCardCreate = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().pattern(REGEX_URL),
+    link: Joi.string().required().pattern(REGEX_URL),
   }),
 });
 
 const validateCardId = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().hex().length(24),
+    cardId: Joi.string().required().hex().length(24),
   }),
 });
 

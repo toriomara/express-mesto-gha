@@ -24,8 +24,6 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
 app.use(routes);
-// app.use(app.router);
-// routes.initialize(app);
 app.use(errors());
 app.use(errorMiddleware);
 
