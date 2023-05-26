@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 const { errorMiddleware } = require('./middlewares/errorMiddleware');
 const routes = require('./routes');
+const { DB_URL } = require('./utils/constants');
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -15,7 +16,6 @@ const limiter = rateLimit({
 });
 
 const { PORT = 3000 } = process.env;
-const DB_URL = 'mongodb://127.0.0.1:27017/mestodb';
 const app = express();
 
 app.use(limiter);

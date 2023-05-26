@@ -27,9 +27,11 @@ const createUser = async (req, res, next) => {
     }).catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при создании пользователя`));
+        return;
       }
       if (err.code === 11000) {
         next(new ConflictError(MESSAGES.BAD_REQUEST));
+        return;
       }
       next(err);
     });

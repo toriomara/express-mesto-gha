@@ -17,5 +17,8 @@ const MESSAGES = {
 };
 
 const REGEX_URL = /(https?:\/\/)(w{3}\.)?(((\d{1,3}\.){3}\d{1,3})|((\w-?)+\.(ru|com)))(:\d{2,5})?((\/.+)+)?\/?#?/;
+const DB_URL = 'mongodb://127.0.0.1:27017/mestodb';
 
-module.exports = { STATUS_CODES, MESSAGES, REGEX_URL };
+module.exports = {
+  STATUS_CODES, MESSAGES, REGEX_URL, DB_URL,
+};
