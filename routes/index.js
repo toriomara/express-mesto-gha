@@ -2,7 +2,7 @@ const router = require('express').Router();
 const userRoutes = require('./users');
 const cardsRoutes = require('./cards');
 const { STATUS_CODES, MESSAGES } = require('../utils/constants');
-const auth = require('../middlewares/auth');
+const { auth } = require('../middlewares/auth');
 const {
   validateSignup,
   validateSignin,

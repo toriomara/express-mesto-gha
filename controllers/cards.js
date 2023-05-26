@@ -4,6 +4,7 @@ const {
 } = require('../errors');
 const { MESSAGES } = require('../utils/constants');
 
+// Не переписывал на then
 const getCards = async (req, res, next) => {
   try {
     const cards = await Card.find({});
