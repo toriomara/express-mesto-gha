@@ -3,6 +3,7 @@ const {
   BadRequestError, NotFoundError, UnauthorizedError,
 } = require('../errors');
 const { MESSAGES } = require('../utils/constants');
+const ForbiddebError = require('../errors/forbiddenError');
 
 // Не переписывал на then
 const getCards = async (req, res, next) => {
@@ -28,21 +29,26 @@ const createCard = async (req, res, next) => {
 };
 
 const deleteCardById = async (req, res, next) => {
-  try {
-    const { cardId } = req.params;
-    const card = await Card.findById(cardId).populate('owner');
-    if (!card) {
-      throw new UnauthorizedError('Карточка с указанным _id не найдена');
-    }
-    const ownerId = card.owner.id;
-    const userId = req.user._id;
-    if (ownerId !== userId) {
-      throw new UnauthorizedError('Невозможно удалить чужую карточку');
-    }
-    return res.send(card);
-  } catch (err) {
-    return next(err);
-  }
+  Card.findById(req.params.cardId)
+    .then((card) => {
+      if (!card) {
+        throw new NotFoundError(MESSAGES.NOT_FOUND);
+      }
+      if (req.user._id !== card.owner.toString()) {
+        throw new ForbiddebError(MESSAGES.FORBIDDEN);
+      }
+      card
+        .deleteOne()
+        .then(() => res.status(200).send({ message: 'Карточка удалена' }));
+    })
+    .catch((error) => {
+      if (error.name === 'CastError') {
+        return next(
+          new BadRequestError(`${MESSAGES.BAD_REQUEST} о карточке`),
+        );
+      }
+      return next(error);
+    });
 };
 
 const likeCard = async (req, res, next) => {
