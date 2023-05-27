@@ -13,17 +13,16 @@ const createUser = async (req, res, next) => {
     name, about, avatar, email, password,
   } = req.body;
   const saltRounds = 10;
-  bcrypt.hash(password, saltRounds).than((hashPassword) => {
+  bcrypt.hash(password, saltRounds).then((hashPassword) => {
     User.create({
       name, about, avatar, email, password: hashPassword,
     }).then((user) => {
       res.send({
-        user,
-        // _id: user._id,
-        // name: user.name,
-        // about: user.about,
-        // avatar: user.avatar,
-        // email: user.email,
+        _id: user._id,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
       });
     }).catch((err) => {
       if (err.name === 'ValidationError') {
@@ -31,7 +30,7 @@ const createUser = async (req, res, next) => {
         return;
       }
       if (err.code === 11000) {
-        next(new ConflictError(MESSAGES.BAD_REQUEST));
+        next(new ConflictError(`${MESSAGES.BAD_REQUEST}ю Такой пользователь уже зарегистрирован`));
         return;
       }
       next(err);
@@ -44,11 +43,11 @@ const login = (req, res, next) => {
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user.id }, JWT_KEY, { expiresIn: '7d' });
-      // res.send({ token, message: 'Вы авторизованы' });
-      res.cookie('jwt', token, {
-        maxAge: 3600000 * 24 * 7,
-        httpOnly: true,
-      })
+      res
+        .cookie('jwt', token, {
+          maxAge: 3600000 * 24 * 7,
+          httpOnly: true,
+        })
         .send({ jwt: token });
     })
     .catch(next);
