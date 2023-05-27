@@ -114,6 +114,7 @@ const getYourself = async (req, res, next) => {
     if (err.name === 'CastError') {
       next(new BadRequestError(MESSAGES.BAD_REQUEST));
     }
+    next(err);
   }
   // User.findById(req.user_id).then((user) => {
   //   if (!user) {

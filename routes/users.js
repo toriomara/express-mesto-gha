@@ -13,8 +13,8 @@ const {
 } = require('../utils/validation');
 
 router.patch('/me/avatar', validateUserAvatar, updateAvatar);
-router.patch('/me', validateUserUpdate, updateUser);
 router.get('/me', getYourself);
+router.patch('/me', validateUserUpdate, updateUser);
 router.get('/:userId', validateUser, getUserById);
 router.get('/', getUsers);
 
