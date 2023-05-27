@@ -10,6 +10,7 @@ const auth = (req, res, next) => {
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
     next(new UnauthorizedError('Авторизуйтесь, пожалуйста'));
+    return;
   }
 
   const token = authorization.replace('Bearer ', '');
@@ -20,6 +21,7 @@ const auth = (req, res, next) => {
     next(new UnauthorizedError('Авторизуйтесь, пожалуйста'));
   }
   req.user = payload;
+  next();
 };
 
 module.exports = { auth, JWT_KEY };
