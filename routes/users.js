@@ -12,10 +12,10 @@ const {
   validateUserAvatar,
 } = require('../utils/validation');
 
-router.patch('/me/avatar', validateUserAvatar, updateAvatar);
+router.get('/', getUsers);
 router.get('/me', getYourself);
 router.patch('/me', validateUserUpdate, updateUser);
+router.patch('/me/avatar', validateUserAvatar, updateAvatar);
 router.get('/:userId', validateUser, getUserById);
-router.get('/', getUsers);
 
 module.exports = router;

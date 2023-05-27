@@ -105,7 +105,8 @@ const getUserById = (req, res, next) => {
 
 const getYourself = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user._id);
+    const userId = req.user._id;
+    const user = await User.findById(userId);
     if (!user) {
       throw new NotFoundError(MESSAGES.NOT_FOUND);
     }

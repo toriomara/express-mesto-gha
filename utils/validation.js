@@ -1,6 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
 const { REGEX_URL } = require('./constants');
-// Joi.objectId = require('joi-objectid')(Joi);
 
 const validateSignup = celebrate({
   body: Joi.object().keys({
@@ -21,7 +20,6 @@ const validateSignin = celebrate({
 
 const validateUser = celebrate({
   params: Joi.object().keys({
-    // userId: Joi.objectId(),
     userId: Joi.string().required().hex().length(24),
   }),
 });
