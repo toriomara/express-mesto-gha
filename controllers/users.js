@@ -30,7 +30,7 @@ const createUser = async (req, res, next) => {
         return;
       }
       if (err.code === 11000) {
-        next(new ConflictError(`${MESSAGES.BAD_REQUEST}ю Такой пользователь уже зарегистрирован`));
+        next(new ConflictError(`${MESSAGES.BAD_REQUEST}. Такой пользователь уже зарегистрирован`));
         return;
       }
       next(err);
@@ -103,13 +103,24 @@ const getUserById = (req, res, next) => {
     });
 };
 
-const getYourself = (req, res, next) => {
-  User.findById(req.user_id).then((user) => {
+const getYourself = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
     if (!user) {
       throw new NotFoundError(MESSAGES.NOT_FOUND);
     }
     res.send(user);
-  }).catch(next);
+  } catch (err) {
+    if (err.name === 'CastError') {
+      next(new BadRequestError(MESSAGES.BAD_REQUEST));
+    }
+  }
+  // User.findById(req.user_id).then((user) => {
+  //   if (!user) {
+  //     throw new NotFoundError(MESSAGES.NOT_FOUND);
+  //   }
+  //   res.send({ user });
+  // }).catch(next);
 };
 
 const updateUser = async (req, res, next) => {

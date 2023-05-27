@@ -16,7 +16,6 @@ const MESSAGES = {
   INTERNAL_SERVER_ERROR: 'На сервере произошла ошибка',
 };
 
-// const REGEX_URL = /(https?:\/\/)(w{3}\.)?(((\d{1,3}\.){3}\d{1,3})|((\w-?)+\.(ru|com)))(:\d{2,5})?((\/.+)+)?\/?#?/;
 const REGEX_URL = /https?:\/\/(www\.)?[a-zA-Z\d-]+\.[\w\d\-.~:/?#[\]@!$&'()*+,;=]{2,}#?/;
 const DB_URL = 'mongodb://127.0.0.1:27017/mestodb';
 
