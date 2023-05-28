@@ -13,9 +13,9 @@ const { NotFoundError } = require('../errors');
 
 router.post('/signup', validateSignup, createUser);
 router.post('/signin', validateSignin, login);
-
-router.use('/users', auth, userRoutes);
-router.use('/cards', auth, cardsRoutes);
+router.use(auth);
+router.use('/users', userRoutes);
+router.use('/cards', cardsRoutes);
 router.use('/*', (req, res, next) => next(new NotFoundError(MESSAGES.NOT_FOUND)));
 
 module.exports = router;
