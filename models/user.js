@@ -50,8 +50,8 @@ userSchema.statics.findUserByCredentials = function (email, password) {
           new UnauthorizedError(MESSAGES.UNAUTHORIZED),
         );
       }
-      return bcrypt.compare(password, user.password).then((match) => {
-        if (!match) {
+      return bcrypt.compare(password, user.password).then((matched) => {
+        if (!matched) {
           return Promise.reject(
             new UnauthorizedError(MESSAGES.UNAUTHORIZED),
           );
