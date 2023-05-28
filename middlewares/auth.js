@@ -19,6 +19,7 @@ const auth = (req, res, next) => {
     payload = jwt.verify(token, JWT_KEY);
   } catch (err) {
     next(new UnauthorizedError('Авторизуйтесь, пожалуйста'));
+    return;
   }
   req.user = payload;
   next();

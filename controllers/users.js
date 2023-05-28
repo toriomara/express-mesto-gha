@@ -53,13 +53,11 @@ const login = (req, res, next) => {
     .catch(next);
 };
 
-const getUsers = async (req, res, next) => {
-  try {
-    const users = await User.find({});
-    return res.send(users);
-  } catch (err) {
-    return next(err);
-  }
+const getUsers = (req, res, next) => {
+  User.find({})
+    .then((users) => {
+      res.send(users);
+    }).catch(next);
 };
 
 const getUserById = (req, res, next) => {
