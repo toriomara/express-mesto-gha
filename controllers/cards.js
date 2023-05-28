@@ -1,6 +1,6 @@
 const Card = require('../models/card');
 const {
-  BadRequestError, NotFoundError, UnauthorizedError,
+  BadRequestError, NotFoundError,
 } = require('../errors');
 const { MESSAGES } = require('../utils/constants');
 const ForbiddebError = require('../errors/forbiddenError');
