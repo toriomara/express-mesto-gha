@@ -1,13 +1,11 @@
 const Card = require('../models/card');
 const {
-  BadRequestError, NotFoundError,
+  BadRequestError, NotFoundError, ForbiddebError,
 } = require('../errors');
 const { MESSAGES, STATUS_CODES } = require('../utils/constants');
-const ForbiddebError = require('../errors/forbiddenError');
 
-// Не переписывал на then
 const getCards = (req, res, next) => {
-  Card.find({}).then((cards) => res.send(cards)).catch(next);
+  Card.find({}).then((cards) => res.statys(STATUS_CODES.OK).send(cards)).catch(next);
 };
 
 const createCard = (req, res, next) => {
@@ -23,7 +21,8 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCardById = (req, res, next) => {
-  Card.findById(req.params.cardId)
+  // Card.findById(req.params.cardId)
+  Card.findById(req.params)
     .then((card) => {
       if (!card) {
         throw new NotFoundError(MESSAGES.NOT_FOUND);
@@ -55,14 +54,15 @@ const likeCard = (req, res, next) => {
       if (!card) {
         throw new NotFoundError(MESSAGES.NOT_FOUND);
       }
-      res.send(card);
+      res.status(STATUS_CODES.OK).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         return next(new NotFoundError(`${MESSAGES.BAD_REQUEST} для постановки лайка`));
       }
       return next(err);
-    });
+    })
+    .catch(next);
 };
 
 const dislikeCard = (req, res, next) => {
@@ -82,7 +82,8 @@ const dislikeCard = (req, res, next) => {
         return next(new NotFoundError(`${MESSAGES.BAD_REQUEST} для постановки лайка`));
       }
       return next(err);
-    });
+    })
+    .catch(next);
 };
 
 module.exports = {
