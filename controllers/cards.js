@@ -6,30 +6,23 @@ const { MESSAGES, STATUS_CODES } = require('../utils/constants');
 const ForbiddebError = require('../errors/forbiddenError');
 
 // Не переписывал на then
-const getCards = async (req, res, next) => {
-  try {
-    const cards = await Card.find({});
-    return res.send(cards);
-  } catch (err) {
-    return next(err);
-  }
+const getCards = (req, res, next) => {
+  Card.find({}).then((cards) => res.send(cards)).catch(next);
 };
 
-const createCard = async (req, res, next) => {
-  try {
-    const { name, link } = req.body;
-    const card = await Card.create({ name, link, owner: req.user._id });
-    return res.status(STATUS_CODES.OK).send(card);
-  } catch (err) {
+const createCard = (req, res, next) => {
+  const { name, link } = req.body;
+  Card.create({ name, link, owner: req.user._id }).then((card) => {
+    res.status(STATUS_CODES.OK).send(card);
+  }).catch((err) => {
     if (err.name === 'ValidationError') {
-      // return next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при создании карточки`));
-      return next(new BadRequestError('Неверные данные при создании карточки'));
+      return next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при создании карточки`));
     }
     return next(err);
-  }
+  });
 };
 
-const deleteCardById = async (req, res, next) => {
+const deleteCardById = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
@@ -52,42 +45,44 @@ const deleteCardById = async (req, res, next) => {
     });
 };
 
-const likeCard = async (req, res, next) => {
-  try {
-    const card = await Card.findByIdAndUpdate(
-      req.params.cardId,
-      { $addToSet: { likes: req.user._id } },
-      { new: true },
-    ).orFail();
-    if (!card) {
-      throw new NotFoundError(MESSAGES.NOT_FOUND);
-    }
-    return res.send(card);
-  } catch (err) {
-    if (err.name === 'CastError') {
-      return next(new NotFoundError(`${MESSAGES.BAD_REQUEST} для постановки лайка`));
-    }
-    return next(err);
-  }
+const likeCard = (req, res, next) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true },
+  )
+    .then((card) => {
+      if (!card) {
+        throw new NotFoundError(MESSAGES.NOT_FOUND);
+      }
+      res.send(card);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return next(new NotFoundError(`${MESSAGES.BAD_REQUEST} для постановки лайка`));
+      }
+      return next(err);
+    });
 };
 
-const dislikeCard = async (req, res, next) => {
-  try {
-    const card = await Card.findByIdAndUpdate(
-      req.params.cardId,
-      { $pull: { likes: req.user._id } },
-      { new: true },
-    ).orFail();
-    if (!card) {
-      throw new NotFoundError(MESSAGES.NOT_FOUND);
-    }
-    return res.send(card);
-  } catch (err) {
-    if (err.name === 'CastError') {
-      return next(new NotFoundError(`${MESSAGES.BAD_REQUEST} для снятия лайка`));
-    }
-    return next(err);
-  }
+const dislikeCard = (req, res, next) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $pull: { likes: req.user._id } },
+    { new: true },
+  )
+    .then((card) => {
+      if (!card) {
+        throw new NotFoundError(MESSAGES.NOT_FOUND);
+      }
+      res.send(card);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return next(new NotFoundError(`${MESSAGES.BAD_REQUEST} для постановки лайка`));
+      }
+      return next(err);
+    });
 };
 
 module.exports = {
