@@ -2,7 +2,7 @@ const Card = require('../models/card');
 const {
   BadRequestError, NotFoundError,
 } = require('../errors');
-const { MESSAGES } = require('../utils/constants');
+const { MESSAGES, STATUS_CODES } = require('../utils/constants');
 const ForbiddebError = require('../errors/forbiddenError');
 
 // Не переписывал на then
@@ -19,10 +19,11 @@ const createCard = async (req, res, next) => {
   try {
     const { name, link } = req.body;
     const card = await Card.create({ name, link, owner: req.user._id });
-    return res.send(card);
+    return res.status(STATUS_CODES.OK).send(card);
   } catch (err) {
     if (err.name === 'ValidationError') {
-      return next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при создании карточки`));
+      // return next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при создании карточки`));
+      return next(new BadRequestError('Неверные данные при создании карточки'));
     }
     return next(err);
   }
