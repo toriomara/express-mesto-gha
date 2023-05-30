@@ -2,13 +2,13 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { MESSAGES, STATUS_CODES } = require('../utils/constants');
-// const {
-//   BadRequestError, NotFoundError, ConflictError, UnauthorizedError,
-// } = require('../errors');
-const { BadRequestError } = require('../errors/badRequestError');
-const { NotFoundError } = require('../errors/notFoundError');
-const { ConflictError } = require('../errors/conflictError');
-const { UnauthorizedError } = require('../errors/unathorizedError');
+const {
+  BadRequestError, NotFoundError, ConflictError, UnauthorizedError,
+} = require('../errors');
+// const { BadRequestError } = require('../errors/badRequestError');
+// const { NotFoundError } = require('../errors/notFoundError');
+// const { ConflictError } = require('../errors/conflictError');
+// const { UnauthorizedError } = require('../errors/unathorizedError');
 const { JWT_KEY } = require('../utils/constants');
 
 const createUser = (req, res, next) => {
@@ -67,7 +67,6 @@ const getUsers = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  // User.findById(req.params.userId)
   User.findById(req.params)
     .then((user) => {
       if (!user) {
@@ -95,7 +94,7 @@ const getYourself = async (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(BadRequestError(MESSAGES.BAD_REQUEST));
-      } else if (err.message === 'Не найдено') {
+      } else if (err.message === 'NotFound') {
         next(new NotFoundError(MESSAGES.NOT_FOUND));
       } else {
         next(err);
@@ -141,7 +140,7 @@ const updateAvatar = (req, res, next) => { /// Доработать
     }
     res.status(STATUS_CODES.OK).send(user);
   })
-    .then((user) => res.status(200)
+    .then((user) => res.status(STATUS_CODES.OK)
       .send(user))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
