@@ -8,14 +8,18 @@ const {
   validateSignin,
 } = require('../utils/validation');
 
-router.use(auth);
 const { createUser, login } = require('../controllers/users');
 const { NotFoundError } = require('../errors');
 
 router.post('/signup', validateSignup, createUser);
 router.post('/signin', validateSignin, login);
-router.use('/users', userRouter);
-router.use('/cards', cardRouter);
+
+// router.use(auth);
+
+router.use('/users', auth, userRouter);
+router.use('/cards', auth, cardRouter);
+
 router.use('/*', (req, res, next) => next(new NotFoundError(MESSAGES.NOT_FOUND)));
+// router.use();
 
 module.exports = router;
