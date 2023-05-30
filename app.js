@@ -7,7 +7,6 @@ const rateLimit = require('express-rate-limit');
 const { errorMiddleware } = require('./middlewares/errorMiddleware');
 const routes = require('./routes');
 const { DB_URL } = require('./utils/constants');
-const { auth } = require('./middlewares/auth');
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -25,7 +24,6 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(routes);
-app.use(auth);
 app.use(errors());
 app.use(errorMiddleware);
 

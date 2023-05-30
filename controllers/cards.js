@@ -10,38 +10,32 @@ const getCards = (req, res, next) => {
 
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
-  Card.create({ name, link, owner: req.user._id }).then((card) => {
+  const owner = req.user._id;
+  Card.create({ name, link, owner }).then((card) => {
     res.status(STATUS_CODES.OK).send(card);
   }).catch((err) => {
     if (err.name === 'ValidationError') {
-      return next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при создании карточки`));
+      next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при создании карточки`));
+    } else {
+      next(err);
     }
-    return next(err);
   });
 };
 
 const deleteCardById = (req, res, next) => {
-  // Card.findById(req.params.cardId)
   Card.findById(req.params)
     .then((card) => {
       if (!card) {
         throw new NotFoundError(MESSAGES.NOT_FOUND);
       }
-      if (req.user._id !== card.owner.toString()) {
-        throw new ForbiddebError(MESSAGES.FORBIDDEN);
+      if (!card.owner.equals(req.user._id)) {
+        throw next(new ForbiddebError(MESSAGES.FORBIDDEN));
       }
-      card
+      return card
         .deleteOne()
-        .then(() => res.status(200).send({ message: 'Карточка удалена' }));
+        .then(() => res.status(STATUS_CODES.OK).send({ message: 'Карточка удалена' }));
     })
-    .catch((error) => {
-      if (error.name === 'CastError') {
-        return next(
-          new BadRequestError(`${MESSAGES.BAD_REQUEST} о карточке`),
-        );
-      }
-      return next(error);
-    });
+    .catch(next);
 };
 
 const likeCard = (req, res, next) => {
@@ -54,15 +48,14 @@ const likeCard = (req, res, next) => {
       if (!card) {
         throw new NotFoundError(MESSAGES.NOT_FOUND);
       }
-      res.status(STATUS_CODES.OK).send(card);
+      res.status(STATUS_CODES.OK).send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         return next(new NotFoundError(`${MESSAGES.BAD_REQUEST} для постановки лайка`));
       }
       return next(err);
-    })
-    .catch(next);
+    });
 };
 
 const dislikeCard = (req, res, next) => {
@@ -75,15 +68,14 @@ const dislikeCard = (req, res, next) => {
       if (!card) {
         throw new NotFoundError(MESSAGES.NOT_FOUND);
       }
-      res.send(card);
+      res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         return next(new NotFoundError(`${MESSAGES.BAD_REQUEST} для постановки лайка`));
       }
       return next(err);
-    })
-    .catch(next);
+    });
 };
 
 module.exports = {
