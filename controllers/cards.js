@@ -5,25 +5,28 @@ const {
 const { MESSAGES, STATUS_CODES } = require('../utils/constants');
 
 const getCards = (req, res, next) => {
-  Card.find({}).then((cards) => res.statys(STATUS_CODES.OK).send(cards)).catch(next);
+  Card.find({}).then((cards) => res.status(STATUS_CODES.OK).send(cards)).catch(next);
 };
 
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
-  Card.create({ name, link, owner }).then((card) => {
-    res.status(STATUS_CODES.OK).send(card);
-  }).catch((err) => {
-    if (err.name === 'ValidationError') {
-      next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при создании карточки`));
-    } else {
-      next(err);
-    }
-  });
+  Card.create({ name, link, owner })
+    .then((card) => {
+      res.status(STATUS_CODES.OK).send(card);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при создании карточки`));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const deleteCardById = (req, res, next) => {
-  Card.findById(req.params)
+  const { cardId } = req.params;
+  Card.findById(cardId)
     .then((card) => {
       if (!card) {
         throw new NotFoundError(MESSAGES.NOT_FOUND);

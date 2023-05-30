@@ -27,9 +27,9 @@ const createUser = (req, res, next) => {
       });
     }).catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new BadRequestError({ message: `${MESSAGES.BAD_REQUEST} при создании пользователя` }));
+        return next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при создании пользователя`));
       } if (err.code === 11000) {
-        next(new ConflictError({ message: `${MESSAGES.BAD_REQUEST}. Такой пользователь уже зарегистрирован` }));
+        return next(new ConflictError(`${MESSAGES.BAD_REQUEST}. Такой пользователь уже зарегистрирован`));
       }
       return next(err);
     });
@@ -67,7 +67,8 @@ const getUsers = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  User.findById(req.params)
+  const { userId } = req.psrams;
+  User.findById(userId)
     .then((user) => {
       if (!user) {
         throw new NotFoundError(MESSAGES.NOT_FOUND);
@@ -135,13 +136,10 @@ const updateAvatar = (req, res, next) => { /// Доработать
       runValidators: true,
     },
   ).then((user) => {
-    if (!user) {
-      throw new NotFoundError(MESSAGES.NOT_FOUND);
-    }
-    res.status(STATUS_CODES.OK).send(user);
+    if (user) return res.status(STATUS_CODES.OK).send(user);
+    throw new NotFoundError(MESSAGES.NOT_FOUND);
   })
-    .then((user) => res.status(STATUS_CODES.OK)
-      .send(user))
+    .then((user) => res.status(STATUS_CODES.OK).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadRequestError(MESSAGES.BAD_REQUEST));
