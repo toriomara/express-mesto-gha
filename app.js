@@ -27,15 +27,24 @@ app.use(routes);
 app.use(errors());
 app.use(errorMiddleware);
 
-const startApp = async () => {
-  try {
-    await mongoose.connect(DB_URL);
-    app.listen(PORT, () => {
-      console.log(`App listening on port ${PORT}`);
-    });
-  } catch (err) {
+const startApp = () => {
+  mongoose.connect(DB_URL);
+  app.listen(PORT, () => {
+    console.log(`App listening on port ${PORT}`);
+  }).catch((err) => {
     console.log(err.message);
-  }
+  });
 };
+
+// const startApp = async () => {
+//   try {
+//     await mongoose.connect(DB_URL);
+//     app.listen(PORT, () => {
+//       console.log(`App listening on port ${PORT}`);
+//     });
+//   } catch (err) {
+//     console.log(err.message);
+//   }
+// };
 
 startApp();
