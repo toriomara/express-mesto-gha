@@ -1,11 +1,11 @@
 const Card = require('../models/card');
 const {
-  BadRequestError, NotFoundError, ForbiddebError,
+  NotFoundError, ForbiddebError,
 } = require('../errors');
 const { MESSAGES, STATUS_CODES } = require('../utils/constants');
 
 const getCards = (req, res, next) => {
-  Card.find({}).then((cards) => res.status(STATUS_CODES.OK).send(cards)).catch(next);
+  Card.find({}).then((cards) => res.send(cards)).catch(next);
 };
 
 const createCard = (req, res, next) => {
@@ -15,13 +15,7 @@ const createCard = (req, res, next) => {
     .then((card) => {
       res.status(STATUS_CODES.OK).send(card);
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при создании карточки`));
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 };
 
 const deleteCardById = (req, res, next) => {
