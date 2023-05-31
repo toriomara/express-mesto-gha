@@ -51,7 +51,7 @@ const likeCard = (req, res, next) => {
       if (!card) {
         throw new NotFoundError(MESSAGES.NOT_FOUND);
       }
-      res.status(STATUS_CODES.OK).send({ data: card });
+      res.status(STATUS_CODES.OK).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -71,7 +71,7 @@ const dislikeCard = (req, res, next) => {
       if (!card) {
         throw new NotFoundError(MESSAGES.NOT_FOUND);
       }
-      res.send({ data: card });
+      res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {

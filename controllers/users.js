@@ -19,11 +19,13 @@ const createUser = (req, res, next) => {
   bcrypt.hash(password, saltRounds).then((hash) => {
     User.create({
       name, about, avatar, email, password: hash,
-    }).then(() => {
+    }).then((user) => {
       res.status(STATUS_CODES.OK).send({
-        data: {
-          name, about, avatar, email,
-        },
+        _id: user._id,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
       });
     }).catch((err) => {
       if (err.name === 'ValidationError') {
@@ -73,7 +75,7 @@ const getUserById = (req, res, next) => {
       if (!user) {
         throw new NotFoundError(MESSAGES.NOT_FOUND);
       }
-      res.status(STATUS_CODES.OK).send({ data: user });
+      res.status(STATUS_CODES.OK).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
