@@ -20,7 +20,7 @@ const createUser = (req, res, next) => {
     User.create({
       name, about, avatar, email, password: hash,
     }).then(() => {
-      res.status(201).send({
+      res.status(STATUS_CODES.OK).send({
         data: {
           name, about, avatar, email,
         },
