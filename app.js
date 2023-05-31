@@ -29,7 +29,7 @@ app.use(errorMiddleware);
 
 const startApp = () => {
   mongoose.connect(DB_URL);
-  app.listen(PORT, () => {
+  app.listen(PORT).then(() => {
     console.log(`App listening on port ${PORT}`);
   }).catch((err) => {
     console.log(err.message);
@@ -47,4 +47,4 @@ const startApp = () => {
 //   }
 // };
 
-startApp();
+startApp(DB_URL);
