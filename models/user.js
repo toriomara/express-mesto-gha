@@ -39,33 +39,24 @@ const userSchema = new mongoose.Schema({
     required: true,
     select: false,
   },
-  // toJSON: {
-  //   useProjection: true,
-  // },
-  // toObject: {
-  //   useProjection: true,
-  // },
 });
 
-userSchema.statics.findUserByCredentials = function (email, password) {
-  // return this.findOne({ email })
-  return this.findOne({ email: this.email })
-    .select('+password')
-    .then((user) => {
-      if (!user) {
+userSchema.statics.findUserByCredentials = (email, password) => this.findOne({ email })
+  .select('+password')
+  .then((user) => {
+    if (!user) {
+      return Promise.reject(
+        new UnauthorizedError(MESSAGES.UNAUTHORIZED),
+      );
+    }
+    return bcrypt.compare(password, user.password).then((matched) => {
+      if (!matched) {
         return Promise.reject(
           new UnauthorizedError(MESSAGES.UNAUTHORIZED),
         );
       }
-      return bcrypt.compare(password, user.password).then((matched) => {
-        if (!matched) {
-          return Promise.reject(
-            new UnauthorizedError(MESSAGES.UNAUTHORIZED),
-          );
-        }
-        return user;
-      });
+      return user;
     });
-};
+  });
 
 module.exports = mongoose.model('user', userSchema);

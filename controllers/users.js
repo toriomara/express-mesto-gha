@@ -36,7 +36,7 @@ const createUser = (req, res, next) => {
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-  User.findOne({ email }).select('+password')
+  User.findUserByCredentials({ email }).select('+password')
     .then((user) => {
       if (!user) {
         return next(new UnauthorizedError(MESSAGES.UNAUTHORIZED));
