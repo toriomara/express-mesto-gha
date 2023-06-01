@@ -24,10 +24,11 @@ const createUser = (req, res, next) => {
         email: user.email,
       });
     }).catch((err) => {
+      if (err.code === 11000) {
+        return next(new ConflictError(`${MESSAGES.BAD_REQUEST}. Такой пользователь уже зарегистрирован`));
+      }
       if (err.name === 'ValidationError') {
         return next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при создании пользователя`));
-      } if (err.code === 11000) {
-        return next(new ConflictError(`${MESSAGES.BAD_REQUEST}. Такой пользователь уже зарегистрирован`));
       }
       return next(err);
     });
