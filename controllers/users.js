@@ -51,7 +51,11 @@ const login = (req, res, next) => {
             JWT_KEY,
             { expiresIn: '7d' },
           );
-          return res.send({ token });
+          // return res.send({ token });
+          return res.cookie(('jwt', token, {
+            maxAge: 3600000 * 24 * 7,
+            httpOnly: true,
+          }));
         });
     })
     .catch(next);
