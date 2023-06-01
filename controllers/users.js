@@ -65,7 +65,7 @@ const getUsers = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  const { userId } = req.psrams;
+  const { userId } = req.params;
   User.findById(userId)
     .then((user) => {
       if (!user) {
