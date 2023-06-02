@@ -5,7 +5,7 @@ const { MESSAGES, STATUS_CODES } = require('../utils/constants');
 const {
   BadRequestError, NotFoundError, ConflictError, UnauthorizedError,
 } = require('../errors');
-const { JWT_KEY } = require('../utils/constants');
+const { JWT_KEY } = require('../middlewares/auth');
 
 const createUser = (req, res, next) => {
   const {
@@ -17,7 +17,6 @@ const createUser = (req, res, next) => {
       name, about, avatar, email, password: hash,
     }).then((user) => {
       res.status(STATUS_CODES.OK).send({
-        _id: user._id,
         name: user.name,
         about: user.about,
         avatar: user.avatar,
@@ -27,9 +26,9 @@ const createUser = (req, res, next) => {
       if (err.code === 11000) {
         return next(new ConflictError(`${MESSAGES.BAD_REQUEST}. Такой пользователь уже зарегистрирован`));
       }
-      if (err.name === 'ValidationError') {
-        return next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при создании пользователя`));
-      }
+      // if (err.name === 'ValidationError') {
+      //   return next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при создании пользователя`));
+      // }
       return next(err);
     });
   }).catch(next);
@@ -76,36 +75,38 @@ const getUserById = (req, res, next) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError(MESSAGES.NOT_FOUND);
+        return next(new NotFoundError(MESSAGES.NOT_FOUND));
       }
-      res.status(STATUS_CODES.OK).send(user);
+      return res.status(STATUS_CODES.OK).send(user);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return next(new BadRequestError(MESSAGES.BAD_REQUEST));
-      }
-      return next(err);
-    });
+    // .catch((err) => {
+    //   if (err.name === 'CastError') {
+    //     return next(new BadRequestError(MESSAGES.BAD_REQUEST));
+    //   }
+    //   return next(err);
+    // });
+    .catch(next);
 };
 
 const getYourself = async (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError(MESSAGES.NOT_FOUND);
+        return next(new NotFoundError(MESSAGES.NOT_FOUND));
       }
-      res.status(STATUS_CODES.OK)
+      return res.status(STATUS_CODES.OK)
         .send(user);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(BadRequestError(MESSAGES.BAD_REQUEST));
-      } else if (err.message === 'NotFound') {
-        next(new NotFoundError(MESSAGES.NOT_FOUND));
-      } else {
-        next(err);
-      }
-    });
+    // .catch((err) => {
+    //   if (err.name === 'CastError') {
+    //     next(BadRequestError(MESSAGES.BAD_REQUEST));
+    //   } else if (err.message === 'NotFound') {
+    //     next(new NotFoundError(MESSAGES.NOT_FOUND));
+    //   } else {
+    //     next(err);
+    //   }
+    // });
+    .catch(next);
 };
 
 const updateUser = (req, res, next) => {
@@ -124,14 +125,14 @@ const updateUser = (req, res, next) => {
     res.status(STATUS_CODES.OK).send(user);
   })
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'CastError') {
         return next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при обновлении профиля`));
       }
       return next(err);
     });
 };
 
-const updateAvatar = (req, res, next) => { /// Доработать
+const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -141,16 +142,16 @@ const updateAvatar = (req, res, next) => { /// Доработать
       runValidators: true,
     },
   ).then((user) => {
-    if (user) return res.status(STATUS_CODES.OK).send(user);
-    throw new NotFoundError(MESSAGES.NOT_FOUND);
+    if (!user) {
+      return next(new NotFoundError(MESSAGES.NOT_FOUND));
+    }
+    return res.send(user);
   })
-    .then((user) => res.status(STATUS_CODES.OK).send(user))
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
-        next(new BadRequestError(MESSAGES.BAD_REQUEST));
-      } else {
-        next(err);
+      if (err.name === 'CastError') {
+        return next(new BadRequestError(MESSAGES.BAD_REQUEST));
       }
+      return next(err);
     });
 };
 
