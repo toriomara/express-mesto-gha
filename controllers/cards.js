@@ -17,10 +17,9 @@ const createCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при создании карточки`));
-      } else {
-        next(err);
+        return next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при создании карточки`));
       }
+      return next(err);
     });
 };
 
@@ -29,13 +28,13 @@ const deleteCardById = (req, res, next) => {
   Card.findById(cardId)
     .then((card) => {
       if (!card) {
-        throw new NotFoundError(MESSAGES.NOT_FOUND);
+        return next(new NotFoundError(MESSAGES.NOT_FOUND));
       }
       if (!card.owner.equals(req.user._id)) {
-        throw next(new ForbiddebError(MESSAGES.FORBIDDEN));
+        return next(new ForbiddebError(MESSAGES.FORBIDDEN));
       }
-      return card
-        .deleteOne()
+      return Card
+        .deleteOne({ _id: card._id })
         .then(() => res.status(STATUS_CODES.OK).send({ message: 'Карточка удалена' }));
     })
     .catch(next);
@@ -49,13 +48,13 @@ const likeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        throw new NotFoundError(MESSAGES.NOT_FOUND);
+        return next(new NotFoundError(MESSAGES.NOT_FOUND));
       }
-      res.status(STATUS_CODES.OK).send(card);
+      return res.status(STATUS_CODES.OK).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return next(new NotFoundError(`${MESSAGES.BAD_REQUEST} для постановки лайка`));
+        return next(new BadRequestError(`${MESSAGES.BAD_REQUEST} для постановки лайка`));
       }
       return next(err);
     });
@@ -69,9 +68,9 @@ const dislikeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        throw new NotFoundError(MESSAGES.NOT_FOUND);
+        return next(new NotFoundError(MESSAGES.NOT_FOUND));
       }
-      res.send(card);
+      return res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
