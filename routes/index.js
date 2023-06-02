@@ -16,6 +16,6 @@ router.post('/signin', validateSignin, login);
 router.use('/users', auth, userRouter);
 router.use('/cards', auth, cardRouter);
 
-router.use('/*', (req, res, next) => next(new NotFoundError(MESSAGES.NOT_FOUND)));
+router.use('/*', auth, (req, res, next) => next(new NotFoundError(MESSAGES.NOT_FOUND)));
 
 module.exports = router;
