@@ -5,7 +5,7 @@ const { MESSAGES, STATUS_CODES } = require('../utils/constants');
 const {
   BadRequestError, NotFoundError, ConflictError, UnauthorizedError,
 } = require('../errors');
-const { JWT_KEY } = require('../middlewares/auth');
+const { JWT_KEY } = require('../utils/constants');
 
 const createUser = (req, res, next) => {
   const {
@@ -26,9 +26,6 @@ const createUser = (req, res, next) => {
       if (err.code === 11000) {
         return next(new ConflictError(`${MESSAGES.BAD_REQUEST}. Такой пользователь уже зарегистрирован`));
       }
-      // if (err.name === 'ValidationError') {
-      //   return next(new BadRequestError(`${MESSAGES.BAD_REQUEST} при создании пользователя`));
-      // }
       return next(err);
     });
   }).catch(next);
@@ -97,15 +94,6 @@ const getYourself = async (req, res, next) => {
       return res.status(STATUS_CODES.OK)
         .send(user);
     })
-    // .catch((err) => {
-    //   if (err.name === 'CastError') {
-    //     next(BadRequestError(MESSAGES.BAD_REQUEST));
-    //   } else if (err.message === 'NotFound') {
-    //     next(new NotFoundError(MESSAGES.NOT_FOUND));
-    //   } else {
-    //     next(err);
-    //   }
-    // });
     .catch(next);
 };
 
