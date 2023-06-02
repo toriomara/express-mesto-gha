@@ -42,6 +42,7 @@ const login = (req, res, next) => {
       if (!user) {
         return next(new UnauthorizedError(MESSAGES.UNAUTHORIZED));
       }
+
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
@@ -52,12 +53,13 @@ const login = (req, res, next) => {
             JWT_KEY,
             { expiresIn: '7d' },
           );
-          return res.send({ token });
-          // return res.cookie(('jwt', token, {
-          //   maxAge: 3600000 * 24 * 7,
-          //   httpOnly: true,
-          // })).send({ token });
-        });
+          return res.cookie('jwt', token, {
+            maxAge: 3600000 * 24 * 7,
+            httpOnly: true,
+          });
+        })
+        .then(() => res.send({ message: 'Авторизация прошла успешно' }))
+        .catch(next);
     })
     .catch(next);
 };
