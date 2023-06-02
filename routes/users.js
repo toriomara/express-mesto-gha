@@ -5,7 +5,7 @@ const {
   getYourself,
   updateUser,
   updateAvatar,
-} = require('../controllers/users');
+} = require('../controllers/users').default;
 const {
   validateUser,
   validateUserId,
