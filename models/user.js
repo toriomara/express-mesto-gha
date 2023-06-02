@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const validator = require('validator');
 const { MESSAGES } = require('../utils/constants');
 const { UnauthorizedError } = require('../errors');
@@ -38,6 +38,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     select: false,
+    minlength: 8,
   },
 });
 

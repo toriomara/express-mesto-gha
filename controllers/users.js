@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { MESSAGES, STATUS_CODES } = require('../utils/constants');
@@ -52,11 +52,11 @@ const login = (req, res, next) => {
             JWT_KEY,
             { expiresIn: '7d' },
           );
-          // return res.send({ token });
-          return res.cookie(('jwt', token, {
-            maxAge: 3600000 * 24 * 7,
-            httpOnly: true,
-          }));
+          return res.send({ token });
+          // return res.cookie(('jwt', token, {
+          //   maxAge: 3600000 * 24 * 7,
+          //   httpOnly: true,
+          // })).send({ token });
         });
     })
     .catch(next);
