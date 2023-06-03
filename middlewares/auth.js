@@ -4,12 +4,12 @@ const jwt = require('jsonwebtoken');
 const { UnauthorizedError } = require('../errors');
 const JWT_KEY = require('../utils/constants');
 
-const auth = async (req, res, next) => {
+const auth = (req, res, next) => {
   const token = req.cookies.jwt;
   let payload;
 
   try {
-    payload = await jwt.verify(token, JWT_KEY);
+    payload = jwt.verify(token, JWT_KEY);
     req.user = payload;
   } catch (err) {
     return next(new UnauthorizedError('Авторизуйтесь, пожалуйста'));
