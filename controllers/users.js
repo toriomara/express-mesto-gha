@@ -1,11 +1,11 @@
 const bcrypt = require('bcryptjs');
-// const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { MESSAGES, STATUS_CODES } = require('../utils/constants');
 const {
-  BadRequestError, NotFoundError, ConflictError, UnauthorizedError,
+  BadRequestError, NotFoundError, ConflictError,
 } = require('../errors');
-// const { JWT_KEY } = require('../utils/constants');
+const { JWT_KEY } = require('../utils/constants');
 
 const createUser = (req, res, next) => {
   const {
@@ -31,39 +31,16 @@ const createUser = (req, res, next) => {
   }).catch(next);
 };
 
-const { signToken } = require('../utils/jwt');
-
 const login = (req, res, next) => {
   const { email, password } = req.body;
-  User.findOne({ email }).select('+password')
+  return User.findUserByCredentials(email, password)
     .then((user) => {
-      if (!user) {
-        next(new UnauthorizedError('Wrong email or password1'));
-        return;
-      }
-      bcrypt.compare(password, user.password).then((match) => {
-        if (!match) {
-          return next(new UnauthorizedError('No such user in DB'));
-        }
-        const result = signToken(user._id);
-        if (!result) { return next(new UnauthorizedError('Wrong email or password2')); }
-        return res
-          .status(200)
-          .cookie('authorization', result, {
-            maxAge: 604800,
-            httpOnly: true,
-            sameSite: true,
-          })
-          .send({ result, message: 'Authorization succed' });
+      const token = jwt.sign({ _id: user._id }, JWT_KEY, {
+        expiresIn: '7d',
       });
+      res.send({ token });
     })
-    .catch((err) => {
-      if (err.code === 401) {
-        next(new UnauthorizedError('Wrong email or password3'));
-        return;
-      }
-      next(err);
-    });
+    .catch(next);
 };
 
 // const login = (req, res, next) => {

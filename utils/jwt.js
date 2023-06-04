@@ -42,19 +42,3 @@
 // };
 
 // module.exports = { getJwtToken, isAuthorized };
-
-const jwt = require('jsonwebtoken');
-const { JWT_KEY } = require('./constants');
-
-const signToken = (_id) => {
-  try {
-    const token = jwt.sign({ _id }, JWT_KEY);
-    return token;
-  } catch (err) {
-    return false;
-  }
-};
-
-module.exports = {
-  signToken,
-};

@@ -4,28 +4,28 @@ const jwt = require('jsonwebtoken');
 const { UnauthorizedError } = require('../errors');
 const JWT_KEY = require('../utils/constants');
 
-const extractBearerToken = (header) => header.replace('Bearer ', '');
-
-// eslint-disable-next-line consistent-return
 const auth = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    return next(new UnauthorizedError('Необходима авторизация'));
+    console.log(1);
+    return next(new UnauthorizedError('Пожалуйста, авторизуйтесь'));
   }
 
-  const token = extractBearerToken(authorization);
+  const token = authorization.replace('Bearer ', '');
   let payload;
 
   try {
     payload = jwt.verify(token, JWT_KEY);
+    console.log(2);
   } catch (err) {
-    return next(new UnauthorizedError('Необходима авторизация'));
+    console.log('error');
+    return next(new UnauthorizedError('Пожалуйста, авторизуйтесь'));
   }
 
-  req.user = payload; // записываем пейлоуд в объект запроса
+  req.user = payload;
 
-  next(); // пропускаем запрос дальше
+  return next();
 };
 
 module.exports = { auth, JWT_KEY };
