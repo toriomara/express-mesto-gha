@@ -40,41 +40,10 @@ const login = (req, res, next) => {
         JWT_KEY,
         { expiresIn: '7d' },
       );
-      // console.log(token, JWT_KEY);
-      console.table({ token, JWT_KEY });
       res.send({ token });
     })
     .catch(next);
 };
-
-// const login = (req, res, next) => {
-//   const { email, password } = req.body;
-//   User.findOne({ email }).select('+password')
-//     .then((user) => {
-//       if (!user) {
-//         return next(new UnauthorizedError(MESSAGES.UNAUTHORIZED));
-//       }
-
-//       return bcrypt.compare(password, user.password)
-//         .then((matched) => {
-//           if (!matched) {
-//             return next(new UnauthorizedError(MESSAGES.UNAUTHORIZED));
-//           }
-//           const token = jwt.sign(
-//             { _id: user._id },
-//             JWT_KEY,
-//             { expiresIn: '7d' },
-//           );
-//           return res.cookie('jwt', token, {
-//             maxAge: 3600000 * 24 * 7,
-//             httpOnly: true,
-//           });
-//         })
-//         .then(() => res.send({ message: 'Авторизация прошла успешно' }))
-//         .catch(next);
-//     })
-//     .catch(next);
-// };
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -92,12 +61,6 @@ const getUserById = (req, res, next) => {
       }
       return res.status(STATUS_CODES.OK).send(user);
     })
-    // .catch((err) => {
-    //   if (err.name === 'CastError') {
-    //     return next(new BadRequestError(MESSAGES.BAD_REQUEST));
-    //   }
-    //   return next(err);
-    // });
     .catch(next);
 };
 
