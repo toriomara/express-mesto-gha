@@ -37,7 +37,7 @@ const deleteCardById = (req, res, next) => {
         .deleteOne({ _id: card._id })
         .then(() => res.status(STATUS_CODES.OK).send({ message: 'Карточка удалена' }));
     })
-    .catch(next);
+    .return(next);
 };
 
 const likeCard = (req, res, next) => {
