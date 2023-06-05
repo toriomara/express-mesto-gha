@@ -27,11 +27,11 @@ const deleteCardById = (req, res, next) => {
   const { cardId } = req.params;
   Card.findById(cardId)
     .then((card) => {
+      if (!card._id) {
+        return next(new NotFoundError(MESSAGES.NOT_FOUND));
+      }
       if (!card.owner.equals(req.user._id)) {
         return next(new ForbiddenError(MESSAGES.FORBIDDEN));
-      }
-      if (!cardId) {
-        return next(new NotFoundError(MESSAGES.NOT_FOUND));
       }
       return card
         .deleteOne({ _id: card._id })
