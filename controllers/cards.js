@@ -30,10 +30,10 @@ const deleteCardById = (req, res, next) => {
       if (!card.owner.equals(req.user._id)) {
         return next(new ForbiddenError(MESSAGES.FORBIDDEN));
       }
-      if (!card) {
+      if (!cardId) {
         return next(new NotFoundError(MESSAGES.NOT_FOUND));
       }
-      return Card
+      return card
         .deleteOne({ _id: card._id })
         .then(() => res.status(STATUS_CODES.OK).send({ message: 'Карточка удалена' }));
     })
