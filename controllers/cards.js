@@ -13,7 +13,7 @@ const createCard = (req, res, next) => {
   const owner = req.user._id;
   Card.create({ name, link, owner })
     .then((card) => {
-      res.status(STATUS_CODES.OK).send(card);
+      res.status(STATUS_CODES.CREATED).send(card);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {

@@ -1,5 +1,6 @@
 const STATUS_CODES = {
   OK: 200,
+  CREATED: 201,
   BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
   FORBIDDEN: 403,
@@ -17,7 +18,7 @@ const MESSAGES = {
   INTERNAL_SERVER_ERROR: 'На сервере произошла ошибка',
 };
 
-const REGEX_URL = /(https?:\/\/)(w{3}\.)?\w+[-.~:/?#[\]@!$&'()*+,;=]*#?/;
+const REGEX_URL = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
 const DB_URL = 'mongodb://127.0.0.1:27017/mestodb';
 const JWT_KEY = 'asaucerfulofsecrets1972kglf894ldkfnk';
 
