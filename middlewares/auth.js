@@ -8,7 +8,7 @@ const auth = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    console.log(1);
+    // console.log(1);
     return next(new UnauthorizedError('Пожалуйста, авторизуйтесь'));
   }
 
@@ -17,14 +17,12 @@ const auth = (req, res, next) => {
 
   try {
     payload = jwt.verify(token, JWT_KEY);
-    console.log(2);
+    // console.log(2);
   } catch (err) {
-    console.log('error');
+    // console.log(token, JWT_KEY);
     return next(new UnauthorizedError('Пожалуйста, авторизуйтесь'));
   }
-
   req.user = payload;
-
   return next();
 };
 
