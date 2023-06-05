@@ -31,7 +31,7 @@ const deleteCardById = (req, res, next) => {
         return next(new NotFoundError(MESSAGES.NOT_FOUND));
       }
       // if (!card.owner.equals(req.user._id)) {
-      if (card.owner !== req.user._id) {
+      if (card.owner.toString() !== req.user._id) {
         return next(new ForbiddebError(MESSAGES.FORBIDDEN));
       }
       return Card
