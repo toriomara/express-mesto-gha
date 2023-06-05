@@ -1,6 +1,6 @@
 const Card = require('../models/card');
 const {
-  BadRequestError, NotFoundError, ForbiddebError,
+  BadRequestError, NotFoundError, ForbiddenError,
 } = require('../errors');
 const { MESSAGES, STATUS_CODES } = require('../utils/constants');
 
@@ -27,12 +27,11 @@ const deleteCardById = (req, res, next) => {
   const { cardId } = req.params;
   Card.findById(cardId)
     .then((card) => {
+      if (!card.owner.equals(req.user._id)) {
+        return next(new ForbiddenError(MESSAGES.FORBIDDEN));
+      }
       if (!card) {
         return next(new NotFoundError(MESSAGES.NOT_FOUND));
-      }
-      // if (!card.owner.equals(req.user._id)) {
-      if (card.owner.toString() !== req.user._id) {
-        return next(new ForbiddebError(MESSAGES.FORBIDDEN));
       }
       return Card
         .deleteOne({ _id: card._id })
