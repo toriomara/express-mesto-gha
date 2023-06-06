@@ -5,6 +5,7 @@ const { errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 const { errorMiddleware } = require('./middlewares/errorMiddleware');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const router = require('./routes');
 const { DB_URL } = require('./utils/constants');
 
@@ -23,7 +24,9 @@ app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+app.use(requestLogger);
 app.use(router);
+app.use(errorLogger);
 app.use(errors());
 app.use(errorMiddleware);
 
