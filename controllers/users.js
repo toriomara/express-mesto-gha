@@ -5,7 +5,8 @@ const { MESSAGES, STATUS_CODES } = require('../utils/constants');
 const {
   BadRequestError, NotFoundError, ConflictError,
 } = require('../errors');
-const { JWT_KEY } = require('../utils/constants');
+
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 const createUser = (req, res, next) => {
   const {
@@ -37,7 +38,7 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        JWT_KEY,
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
         { expiresIn: '7d' },
       );
       res.send({ token });
