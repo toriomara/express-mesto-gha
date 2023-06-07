@@ -13,8 +13,8 @@ const { createUser, login } = require('../controllers/users');
 router.post('/signup', validateSignup, createUser);
 router.post('/signin', validateSignin, login);
 
-router.use('/users', auth, userRouter);
-router.use('/cards', auth, cardRouter);
+router.use('api/users', auth, userRouter);
+router.use('api/cards', auth, cardRouter);
 
 router.use('/*', (req, res, next) => next(new NotFoundError(MESSAGES.NOT_FOUND)));
 
