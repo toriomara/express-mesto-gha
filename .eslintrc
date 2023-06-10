@@ -4,7 +4,6 @@
   },
   "extends": "airbnb-base",
   "rules": {
-    "quotes": [2, "single", { "avoidEscape": true }],
     "no-underscore-dangle": ["error", { "allow": ["_id"] }]
   }
 }

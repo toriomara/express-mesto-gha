@@ -49,7 +49,7 @@ const login = (req, res, next) => {
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
-      res.status(STATUS_CODES.OK).send(users);
+      res.send(users);
     }).catch(next);
 };
 
@@ -60,7 +60,7 @@ const getUserById = (req, res, next) => {
       if (!user) {
         return next(new NotFoundError(MESSAGES.NOT_FOUND));
       }
-      return res.status(STATUS_CODES.OK).send(user);
+      return res.send(user);
     })
     .catch(next);
 };
@@ -71,8 +71,7 @@ const getYourself = async (req, res, next) => {
       if (!user) {
         return next(new NotFoundError(MESSAGES.NOT_FOUND));
       }
-      return res.status(STATUS_CODES.OK)
-        .send(user);
+      return res.send(user);
     })
     .catch(next);
 };
@@ -90,7 +89,7 @@ const updateUser = (req, res, next) => {
     if (!user) {
       throw new NotFoundError(MESSAGES.NOT_FOUND);
     }
-    res.status(STATUS_CODES.OK).send(user);
+    res.send(user);
   })
     .catch((err) => {
       if (err.name === 'CastError') {

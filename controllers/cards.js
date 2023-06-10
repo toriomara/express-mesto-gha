@@ -5,7 +5,10 @@ const {
 const { MESSAGES, STATUS_CODES } = require('../utils/constants');
 
 const getCards = (req, res, next) => {
-  Card.find({}).then((cards) => res.status(STATUS_CODES.OK).send(cards)).catch(next);
+  Card.find({})
+    .populate(['owner', 'likes'])
+    .then((cards) => res.send(cards.reverse()))
+    .catch(next);
 };
 
 const createCard = (req, res, next) => {
@@ -33,7 +36,7 @@ const deleteCardById = (req, res, next) => {
       }
       return card
         .deleteOne({ _id: card._id })
-        .then(() => res.status(STATUS_CODES.OK).send({ message: 'Карточка удалена' }));
+        .then(() => res.send({ message: 'Карточка удалена' }));
     })
     .catch(next);
 };
@@ -44,11 +47,12 @@ const likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
+    .populate(['owner', 'likes'])
     .then((card) => {
       if (!card) {
         return next(new NotFoundError(MESSAGES.NOT_FOUND));
       }
-      return res.status(STATUS_CODES.OK).send(card);
+      return res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -64,6 +68,7 @@ const dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
+    .populate(['owner', 'likes'])
     .then((card) => {
       if (!card) {
         return next(new NotFoundError(MESSAGES.NOT_FOUND));
